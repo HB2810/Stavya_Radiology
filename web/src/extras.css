@@ -1,0 +1,150 @@
+/* Small additions that SSIE's stylesheet does not have. Same tokens. */
+.seg { display: flex; }
+.seg button { flex: 1; height: 36px; border: 1px solid var(--line-strong); background: #fff; font-weight: 600; font-size: 12px; cursor: pointer; margin-left: -1px; }
+.seg button:first-child { border-radius: 7px 0 0 7px; margin-left: 0; } .seg button:last-child { border-radius: 0 7px 7px 0; }
+.seg button.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+.seg button.on.STAT { background: var(--danger); border-color: var(--danger); } .seg button.on.URGENT { background: var(--warning); border-color: var(--warning); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0 12px; font-size: 12px; color: var(--muted); }
+.chip { border: 1px solid var(--blue-line); background: var(--blue-soft); color: var(--blue-hover); border-radius: 999px; padding: 4px 11px; font-weight: 700; font-size: 12px; cursor: pointer; }
+.chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+.pick-list { display: grid; gap: 6px; margin-top: 8px; }
+.pick { display: flex; flex-direction: column; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 9px 12px; cursor: pointer; }
+.pick:hover { background: var(--blue-soft); border-color: var(--blue-line); } .pick span { font-size: 11.5px; color: var(--muted); font-family: var(--font-mono); }
+.thread { display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; margin-bottom: 12px; }
+.msg { background: var(--canvas); border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; max-width: 86%; }
+.msg.mine { align-self: flex-end; background: var(--blue-soft); border-color: var(--blue-line); }
+.msg small { display: block; color: var(--muted); font-size: 11px; margin-bottom: 2px; } .msg div { font-size: var(--text-sm); }
+.compose { display: flex; gap: 8px; } .compose input { flex: 1; height: 36px; border: 1px solid var(--line-strong); border-radius: 7px; padding: 0 10px; font-size: var(--text-sm); }
+.inline-input { width: 100%; height: 36px; border: 1px solid var(--line-strong); border-radius: 7px; padding: 0 10px; font-size: var(--text-sm); background: #fff; }
+.field-label input, .field-label select { width: 100%; height: 36px; border: 1px solid var(--line-strong); border-radius: 7px; padding: 0 10px; font-size: var(--text-sm); background: #fff; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); align-items: start; }
+.row-gap { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tabular tr { cursor: pointer; } .late-mark td:first-child { box-shadow: inset 3px 0 var(--danger); }
+.bell-btn { position: relative; } .bell-btn .nav-count { position: absolute; top: -2px; right: -2px; background: var(--blue); color: #fff; }
+.login-simple { max-width: 372px; width: 100%; margin: 0 auto; }
+@media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* QueueTable always renders 5 columns (Patient, Study, Priority/status, Due, Action); ssie.css's .clinical-table.queue
+   rule only accounts for 4 (it's copied from a 4-column source table) and its generic .col-action{width:1%} shrink-to-fit
+   trick only works in table-layout:auto, not the fixed layout .queue forces -- without this override the Action column
+   (and its Report/Open/Acknowledge buttons) is squeezed to a few pixels. Override all 5 columns explicitly instead of
+   patching just the last one, so the four data columns keep sane, intentional proportions instead of whatever the
+   original 4-column split left over. */
+.clinical-table.queue th:nth-child(1), .clinical-table.queue td:nth-child(1) { width: 23%; }
+.clinical-table.queue th:nth-child(2), .clinical-table.queue td:nth-child(2) { width: 25%; }
+.clinical-table.queue th:nth-child(3), .clinical-table.queue td:nth-child(3) { width: 22%; }
+.clinical-table.queue th:nth-child(4), .clinical-table.queue td:nth-child(4) { width: 14%; }
+.clinical-table.queue .col-action { width: 16%; }
+.clinical-table.queue.compact { min-width: 0; }
+.clinical-table.queue.compact th:nth-child(1), .clinical-table.queue.compact td:nth-child(1) { width: 25%; }
+.clinical-table.queue.compact th:nth-child(2), .clinical-table.queue.compact td:nth-child(2) { width: 24%; }
+.clinical-table.queue.compact th:nth-child(3), .clinical-table.queue.compact td:nth-child(3) { width: 21%; }
+.clinical-table.queue.compact th:nth-child(4), .clinical-table.queue.compact td:nth-child(4) { width: 14%; }
+.clinical-table.queue.compact .col-action { width: auto; }
+.clinical-table.queue .cell-flags { gap: 3px; }
+.clinical-table.queue .col-action .row-actions { flex-wrap: wrap; }
+.hide-body .card-body { display: none; }
+.kpi-strip { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.n { text-align: right; }
+
+.sum-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.sum-cell { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--canvas); }
+.sum-cell b { display: block; font-size: 1.2rem; letter-spacing: -.02em; } .sum-cell span { font-size: 11px; color: var(--muted); font-weight: 600; }
+.modal-body .clinical-table, .modal-body .clinical-table.compact { min-width: 0; }
+.modal-body .table-scroll { overflow-x: visible; }
+
+/* Grouped masters table (admin service catalog): modality then sub-group header rows. */
+.table-group-row td { background: var(--canvas); font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding-top: 7px; padding-bottom: 7px; border-bottom: 1px solid var(--line); }
+.table-group-row.sub td { padding-left: 20px; font-weight: 700; color: var(--navy-2); background: #fff; }
+
+/* Reception: channel launch tiles (data-entry front door) */
+.channel-launch { margin-bottom: var(--s-4); }
+.channel-launch-head { margin-bottom: 12px; }
+.channel-launch-head h2 { margin: 0 0 4px; font-size: 1.05rem; letter-spacing: -.01em; }
+.channel-launch-head p { margin: 0; color: var(--muted); font-size: var(--text-sm); max-width: 52rem; }
+.channel-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.channel-tiles.compact { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.channel-tile {
+  display: flex; flex-direction: column; gap: 6px; text-align: left;
+  border: 1px solid var(--line-strong); background: #fff; border-radius: 12px; padding: 14px 14px 12px;
+  cursor: pointer; min-height: 118px; transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.channel-tile:hover { border-color: var(--blue); box-shadow: 0 6px 18px rgba(15, 40, 80, .06); transform: translateY(-1px); }
+.channel-tile.urgent { border-color: #f0b4b4; background: linear-gradient(180deg, #fff8f8, #fff); }
+.channel-tile-kicker { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--blue); }
+.channel-tile strong { font-size: 14px; line-height: 1.25; color: var(--navy); }
+.channel-tile span { font-size: 12px; color: var(--muted); line-height: 1.35; }
+.channel-tile em { margin-top: auto; font-style: normal; font-size: 11px; font-weight: 700; color: var(--navy-2); }
+.token-num { font-size: 1.05rem; letter-spacing: .02em; }
+@media (max-width: 1100px) { .channel-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .channel-tiles { grid-template-columns: 1fr 1fr; } }
+
+/* Reception desk: calm board — focus chips + optional pay strip + one table */
+.desk-focus {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 var(--s-4);
+  padding: 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--canvas);
+}
+.desk-focus-btn {
+  display: inline-flex; align-items: baseline; gap: 6px;
+  border: 1px solid transparent; background: transparent; border-radius: 9px;
+  padding: 8px 12px; cursor: pointer; font: inherit; color: var(--muted);
+}
+.desk-focus-btn strong { font-size: 1.05rem; letter-spacing: -.02em; color: var(--navy); font-variant-numeric: tabular-nums; }
+.desk-focus-btn span { font-size: 12px; font-weight: 600; }
+.desk-focus-btn:hover { background: #fff; color: var(--navy); }
+.desk-focus-btn.on { background: #fff; border-color: var(--line-strong); color: var(--navy); box-shadow: 0 1px 2px rgba(15, 40, 80, .04); }
+.desk-focus-btn.hot strong { color: var(--blue); }
+.desk-focus-btn.pay strong { color: var(--danger); }
+.desk-focus-btn.on.hot { border-color: var(--blue-line); background: var(--blue-soft); }
+.desk-focus-btn.on.pay { border-color: #f0b4b4; background: #fff8f8; }
+
+.desk-pay-banner {
+  margin: 0 0 var(--s-4); border: 1px solid #f0b4b4; border-radius: 12px;
+  background: linear-gradient(180deg, #fff8f8, #fff); padding: 12px 14px;
+}
+.desk-pay-banner-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.desk-pay-banner-head > div { display: flex; flex-direction: column; gap: 2px; }
+.desk-pay-banner-head strong { font-size: 13.5px; color: var(--navy); }
+.desk-pay-banner-head span { font-size: 12px; color: var(--muted); font-weight: 600; }
+.desk-pay-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.desk-pay-chip {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center;
+  border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 10px 12px;
+}
+.desk-pay-chip.is-new { border-color: var(--blue); background: #f3f8ff; }
+.desk-pay-chip > div { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.desk-pay-chip strong { font-size: 13px; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.desk-pay-chip span { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.desk-pay-chip b { font-size: 13.5px; color: var(--danger); }
+
+.row-new td { background: #f3f8ff !important; }
+.row-new td:first-child { box-shadow: inset 3px 0 var(--blue); }
+.row-pay td:first-child { box-shadow: inset 3px 0 var(--danger); }
+.row-protocol td:first-child { box-shadow: inset 3px 0 #d97706; }
+.row-new.row-pay td:first-child { box-shadow: inset 3px 0 var(--blue), inset 6px 0 var(--danger); }
+.row-new.row-protocol td:first-child { box-shadow: inset 3px 0 var(--blue), inset 6px 0 #d97706; }
+@keyframes deskPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(37, 99, 235, .18); }
+}
+.patient-link { display: inline-flex; align-items: center; gap: 8px; }
+.patient-link .avatar.xs { width: 28px; height: 28px; font-size: 10px; flex: 0 0 auto; }
+.desk-table .cell-flags { margin-bottom: 2px; }
+.notice .linkish {
+  display: inline; border: 0; background: none; padding: 0; margin: 0;
+  color: inherit; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer;
+}
+@media (max-width: 720px) {
+  .desk-focus { flex-wrap: nowrap; overflow-x: auto; }
+  .desk-focus-btn { flex: 0 0 auto; }
+}
+
+.category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.category-tile {
+  display: flex; flex-direction: column; gap: 4px; text-align: left;
+  border: 1px solid var(--line-strong); background: #fff; border-radius: 10px; padding: 12px; cursor: pointer;
+}
+.category-tile:hover { border-color: var(--blue); }
+.category-tile.on { border-color: var(--blue); background: var(--blue-soft); }
+.category-tile strong { font-size: 14px; color: var(--navy); }
+.category-tile span { font-size: 11.5px; color: var(--muted); }

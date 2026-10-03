@@ -1,0 +1,13 @@
+{
+  "name": "stavya-ris",
+  "version": "0.1.0",
+  "description": "Radiology management system for Stavya Spine Hospital: OPD/IPD/OT coordination, orders, worklist, reporting, critical findings, audit. No PACS.",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "start": "node server/index.js",
+    "seed": "node server/seed.js",
+    "test": "node --test --no-warnings test/*.test.js"
+  }
+}

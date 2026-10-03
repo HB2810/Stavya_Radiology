@@ -1,0 +1,1454 @@
+{
+ "catalog": [
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "LUMBAR SPINE",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "CERVICAL SPINE",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DORSAL SPINE",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "D.L  SPINE",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "D.L .S SPINE",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "ANKY PROTOCAL",
+   "cash": 5200,
+   "online": 5000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "ENDO PROTOCOL",
+   "cash": 5200,
+   "online": 5000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "W.S.S",
+   "cash": 3700,
+   "online": 3500
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "LUMBAR SPINE SCREENING",
+   "cash": 3500,
+   "online": 3300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "CERVICAL SPINE SCREENING",
+   "cash": 3500,
+   "online": 3300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "D.L SPINE SCREENING",
+   "cash": 3500,
+   "online": 3300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DORSAL SPINE SCREENING",
+   "cash": 3500,
+   "online": 3300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "D.L.S SPINE SCREENING",
+   "cash": 3500,
+   "online": 3300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "HIP SI SCREENING",
+   "cash": 3500,
+   "online": 3300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SHOULDER",
+   "item": "SHOULDER SCREENING",
+   "cash": 4000,
+   "online": 3800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI KNEE",
+   "item": "KNEE SCREENING",
+   "cash": 4000,
+   "online": 3800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI WEIST",
+   "item": "WEIST SCREENING",
+   "cash": 4000,
+   "online": 3800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "CERVICAL+DORSAL SCREENING",
+   "cash": 3700,
+   "online": 3500
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "W.S.S+HIP SI SCREENING",
+   "cash": 5200,
+   "online": 5000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "L.S SPINE +HIP SI SCREENING",
+   "cash": 7500,
+   "online": 7300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "L.S SCREENING+HIP SI SCREENING",
+   "cash": 4800,
+   "online": 4600
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "CERVICAL SPINE SCREENING+HIP SI SCREENING",
+   "cash": 4800,
+   "online": 4600
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DL SPINE SCREENIG+HIP SI SCREENING",
+   "cash": 4800,
+   "online": 4600
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "L.S SPINE + W.S.S",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DORSAL+W.S.S.",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "CERVICAL SPINE+W.S.S",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "D.L.S SPINE +W.S.S",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "L.S SPINE+W.S.S+HIP SI SCREENING",
+   "cash": 9500,
+   "online": 9300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DORSAL+W.S.S+HIP SI SCREENING",
+   "cash": 9500,
+   "online": 9300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "CERVICAL SPINE+W.S.S +HIP SI SCREENING",
+   "cash": 9500,
+   "online": 9300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "D.L.S SPINE+W.S.S+HIP SI SCREENING",
+   "cash": 9500,
+   "online": 9300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "L.S SPINE T2 SAG + T2 Axial",
+   "cash": 4000,
+   "online": 3800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "CX SPINE T2 SAG + T2 Axial",
+   "cash": 4000,
+   "online": 3800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DLS SPINE T2 SAG + T2 Axial",
+   "cash": 4000,
+   "online": 3800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DORSAL SPINE SPINE T2 SAG + T2 Axial",
+   "cash": 4000,
+   "online": 3800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "L.S SPINE FLEXION/EXTENSION",
+   "cash": 5000,
+   "online": 4800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "CX SPINE FLEXION/EXTENSION",
+   "cash": 5000,
+   "online": 4800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DLS SPINE FLEXION/EXTENSION",
+   "cash": 5000,
+   "online": 4800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "DORSAL SPINE CREENG+L.S SPINE STRES MRI",
+   "cash": 5000,
+   "online": 4800
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "SPINEL CORD-DTI",
+   "cash": null,
+   "online": 10000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "BRAIN SCREENING",
+   "cash": 3500,
+   "online": 3300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "BRAIN WITH DWI/TN/CISS/EPILEPSY PROTOCAL",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "BARIN ANGIOGRAPTHY/ VENOGRAPHY",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "SCREENIG BRAIN EITH ANGIO / VENO",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "BRACHIAL PLEXUSS",
+   "cash": 8200,
+   "online": 8000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "LUMBER PLEXUSS",
+   "cash": 8200,
+   "online": 8000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI NACK",
+   "item": "NACK/PNS",
+   "cash": 6500,
+   "online": 6300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI ABDOMEN",
+   "item": "MRCP",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI PELVIS",
+   "item": "PERIANAL /FITULA",
+   "cash": 6500,
+   "online": 6300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI ABDOMEN",
+   "item": "ABDOMEN+PELVIS",
+   "cash": 10200,
+   "online": 10000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI ABDOMEN",
+   "item": "ABDOMEN+PELVIS(WITH CONTRAST)",
+   "cash": 14200,
+   "online": 14000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "STROKE PROTOCOL (PLAIN)",
+   "cash": 10200,
+   "online": 10000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "STROKE PROTOCOL (CONTRAST)",
+   "cash": 12200,
+   "online": 12000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "BRAIN+STROKE PROTOCAL",
+   "cash": 14200,
+   "online": 14000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "SPECTROSCOPY BRAIN+CONTRAST",
+   "cash": 12200,
+   "online": 12000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "ONLY SPECTRO",
+   "cash": 6500,
+   "online": 6300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "BRAIN WITH ORBIT SCREENING",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "BRAIN WITH CISTERNOGRAPHY",
+   "cash": 9200,
+   "online": 9000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "CISTERNOGRAPHY",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "MS PROTOCOL",
+   "cash": 13200,
+   "online": 13000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "VENOGRAPHY WITH CONTRAST",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "ORBIT",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI UPER LIMB",
+   "item": "ELBOW+FOREARM",
+   "cash": 8500,
+   "online": 8300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI LOWER LIMB",
+   "item": "KNEE+FEMUR",
+   "cash": 8500,
+   "online": 8300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI LOWER LIMB",
+   "item": "KNEE+TIBIA",
+   "cash": 8500,
+   "online": 8300
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MIR SPINE",
+   "item": "O.MRI CX+L.S-T2 SAG/AXIAL",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "ANKYLOSING SPONDYLITIS WITH KYPHOSIS",
+   "cash": null,
+   "online": null
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "SI JOINT",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "COCCXY SPINE",
+   "cash": 6200,
+   "online": 6000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SHOULDER",
+   "item": "SHOULDER",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI KNEE",
+   "item": "KNEE(SINGLE)",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI WRIST",
+   "item": "WRIST",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI ANKLE",
+   "item": "ANKLE",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI PELVIS",
+   "item": "PELVIS/HIP",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI ANGIO",
+   "item": "MR ANGIO",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI GENERAL",
+   "item": "CONTRAST MRI",
+   "cash": 10200,
+   "online": 10000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "STRESS L.S SPINE",
+   "cash": 7700,
+   "online": 7500
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI ANGIO",
+   "item": "VERTIBAL ANGIO",
+   "cash": 7200,
+   "online": 7000
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI BRAIN",
+   "item": "BRAIN",
+   "cash": null,
+   "online": null
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI GENERAL",
+   "item": "EXTRA CHARGES (XE)",
+   "cash": null,
+   "online": 1000,
+   "note": "Add-on surcharge; applicability not specified in the charge sheet -- confirm with billing before use."
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI GENERAL",
+   "item": "Ankylosing Spondylitis With Kyphosis",
+   "cash": null,
+   "online": null,
+   "note": "Listed in the charge sheet with no rate -- price on request; set once confirmed."
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI GENERAL",
+   "item": "Obese",
+   "cash": null,
+   "online": null,
+   "note": "Listed in the charge sheet with no rate -- price on request; set once confirmed."
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI SPINE",
+   "item": "Singal Side Neural Foramina In Cervical Spine",
+   "cash": null,
+   "online": null,
+   "note": "Listed in the charge sheet with no rate -- price on request; set once confirmed."
+  },
+  {
+   "modality": "MRI",
+   "subGroup": "MRI GENERAL",
+   "item": "Open Mri Standing For Claustrophobic Patient",
+   "cash": null,
+   "online": null,
+   "note": "Listed in the charge sheet with no rate -- price on request; set once confirmed."
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY",
+   "item": "ANY SINGLE X-RAY CAHRGE",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "CERVICAL SPINE AP",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "CERVICAL SPINE LATERAL",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "CERVICAL SPINE AP WITH OPEN MOUTH",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "CERVICAL SPINE AP & LAT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "CERVICAL SPINE LAT-FLE/EXT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "CERVICAL SPINE AP & LAT-FLE/EXT",
+   "cash": 1500,
+   "online": 1500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "CERVICAL SPINE OBLIQUE(SINGLE-RIGHT /LEFT)",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "CERVICAL SPINE OBLIQUE(BOTH-RIGHT & LEFT)",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL-LUMBAR SPINE AP",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL-LUMBAR SPINE LATERAL",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL-LUMBAR SPINE AP & LAT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL-LUMBAR SPINE LAT-FLE/EXT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL-LUMBAR SPINE AP & LAT-FLE/EXT",
+   "cash": 1500,
+   "online": 1500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL-LUMBAR SPINE OBLIQUE (SINGLE-RINGT/LEFT)",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL-LUMBAR SPINE(BOTH-RIGHT & LEFT)",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY CHEST",
+   "item": "CHEST AP/PA",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "WHOLE SPINE AP",
+   "cash": 1300,
+   "online": 1300
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "WHOLE SPINE LAT",
+   "cash": 1300,
+   "online": 1300
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "WHOLE SPINE AP & LAT",
+   "cash": 1300,
+   "online": 1300
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "WHOLE SPINE IN RIGHT/ LEFT BENDING",
+   "cash": 2300,
+   "online": 2300
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY WRIST",
+   "item": "WRIST JOINT AP",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY WRIST",
+   "item": "WRIST JOINT LAT",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY WRIST",
+   "item": "WRIST JOINT AP & LAT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY KNEE",
+   "item": "BOTH KNEE JOINT AP OR LAT (SINGLE)",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY KNEE",
+   "item": "SINGLE KNEE JOINT AP & LAT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY KNEE",
+   "item": "BOTH KNEE JOINT LAT (RIGHT & LEFT)",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "LUMBAR SPINE AP",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "LUMBAR SPINE LATERAL",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "LUMBAR SPINE AP & LAT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "LUMBAR SPINE LAT-FLE/EXT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "LUMBAR SPINE AP & LAT-FLE/EXT",
+   "cash": 1500,
+   "online": 1500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "LUMBAR SPINE OBLIQUE (SINGLE-RIGHT/LEFT)",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "LUMBAR SPINE OBLIQUE (BOTH-RIGHT & LEFT)",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL SPINE AP",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORSAL SPINE LATERAL",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "DORDAL SPINE AP & LAT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "COCCYX LATERAL SITTING",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "COCCTX LATERAL STANDING",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SPINE",
+   "item": "COCCYX LATERAL STANDING/LYING AND SITTING",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY PELVIS",
+   "item": "PELVIS WITH BOTH HIP JOINT AP",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SHOUDER",
+   "item": "SHOUDER JOINT AP",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SHOUDER",
+   "item": "SHOUDER JOINT LAT",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SHOUDER",
+   "item": "SHOUDER JOINT SWIMMER'S VIEW",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY SHOUDER",
+   "item": "SHOUDER JOINT AP & LAT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY ANKLE",
+   "item": "ANKLE JOINT AP",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY ANKLE",
+   "item": "ANKLE JOINT LAT",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY ANKLE",
+   "item": "ANKLE JOINT AP & LAT",
+   "cash": 1100,
+   "online": 1100
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY HEEL",
+   "item": "BOTH HEEL LATERAL",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "XR",
+   "subGroup": "X-RAY HEEL",
+   "item": "SINGLE HEEL LATERAL",
+   "cash": 500,
+   "online": 500
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "LUMBAR SPINE",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "CARVICAL SPINE",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "DORSAL SPINE",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "D.L SPINE",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "L.S +CX+DORSAL SCREENIG",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "COCCXY",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "NECK PLAIN",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "NECK ANGIO (CARVICAL)",
+   "cash": null,
+   "online": null,
+   "priceTierHint": "ANGIO",
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "CT NECK VENOGRAM",
+   "cash": null,
+   "online": null,
+   "priceTierHint": "ANGIO",
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "Q CT FOR BONE DINSITY",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "FLEXION-EXTENSION",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "WHOLE SPINE",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN SPINE",
+   "item": "NECK PLAIN WITH CONTRAST",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN BRAIN",
+   "item": "PNS PLAIN",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN BRAIN",
+   "item": "3D CT FACIAL BONE",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN BRAIN",
+   "item": "TEMPORAL BONE",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN BRAIN",
+   "item": "PNS WITH CONTRAST",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN BRAIN",
+   "item": "CT MYELOGRAM",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN BRAIN",
+   "item": "CISTERNOGRAM",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "BRAIN , ABDOMEN, LL",
+   "item": "VENOGRAPHY",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "ABDOMEN PLAIN",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "ABDOMEN SCREENING",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "KUB PLAIN",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "ABDOMEN PLAIN WITH CONTRAST",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "ENTEROGRAPHY",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "THORAX PLAIN WITH CONTRAST",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "IVP",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "ABDOMINAL ANGIO",
+   "cash": null,
+   "online": null,
+   "priceTierHint": "ANGIO",
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "AORTAGRAM",
+   "cash": null,
+   "online": null,
+   "priceTierHint": "ANGIO",
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "RENAL ANGIO",
+   "cash": null,
+   "online": null,
+   "priceTierHint": "ANGIO",
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "PULMONARY ANGIO",
+   "cash": null,
+   "online": null,
+   "priceTierHint": "ANGIO",
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "SINOGRAM",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "THORAX WITH VIRTUAL BRONCHOSCOPY",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "THORAX WITH UPPER ABDOMEN",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ABDOMEN",
+   "item": "LOOPOGRAM",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN THORAX",
+   "item": "THORAX INSPIRATION-EXPIRATION",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN THORAX",
+   "item": "THORAX PLAIN (HR CT)",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN THORAX",
+   "item": "CALCIUM SCORE",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN PELVIS",
+   "item": "PELVIS PLAIN",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN NECK",
+   "item": "NECK WITH UPPER THORAX",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN LL",
+   "item": "SCANOGRAM BOTH LL",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN LL",
+   "item": "BOTH LL ANGIO",
+   "cash": null,
+   "online": null,
+   "priceTierHint": "ANGIO",
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN UL",
+   "item": "BOTH UPPER LIMB ANGIO",
+   "cash": null,
+   "online": null,
+   "priceTierHint": "ANGIO",
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ALL",
+   "item": "GUIDED BIOPSY",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT SCAN ALL",
+   "item": "ANY SINGLE JOINT (SHOULDER, KNEE, LEG, PEMUR, FOOT, RTC)",
+   "cash": null,
+   "online": null,
+   "priceTierHint": null,
+   "note": "Not individually priced in the hospital charge sheet. The sheet only gives generic tiers: CT Screening Rs 4000, CT Full Study Rs 6000, CT Angio Rs 10000. Billing must pick the matching tier for this exam until the hospital supplies an item-level rate."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT GENERAL",
+   "item": "VISIPAQUE CONTRAST",
+   "cash": null,
+   "online": null,
+   "note": "Listed with no rate in the charge sheet -- confirm with billing."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT GENERAL",
+   "item": "EMERGECY CHARGE",
+   "cash": null,
+   "online": null,
+   "note": "Listed with no rate in the charge sheet -- confirm with billing."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT GENERIC TIERS",
+   "item": "CT SCREENING",
+   "cash": 4000,
+   "online": 4000,
+   "note": "Generic tariff tier from the charge sheet, used to price the unpriced CT items above."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT GENERIC TIERS",
+   "item": "CT FULL STUDY",
+   "cash": 6000,
+   "online": 6000,
+   "note": "Generic tariff tier from the charge sheet, used to price the unpriced CT items above."
+  },
+  {
+   "modality": "CT",
+   "subGroup": "CT GENERIC TIERS",
+   "item": "CT ANGIO",
+   "cash": 10000,
+   "online": 10000,
+   "note": "Generic tariff tier from the charge sheet, used to price the unpriced CT items above."
+  },
+  {
+   "modality": "DEXA",
+   "subGroup": "DEXA SPINE",
+   "item": "SPINE",
+   "cash": null,
+   "online": null,
+   "note": "No rate given in either sheet -- set the hospital's DEXA tariff before use."
+  },
+  {
+   "modality": "DEXA",
+   "subGroup": "DEXA SPINE",
+   "item": "SPINE ,HIP",
+   "cash": null,
+   "online": null,
+   "note": "No rate given in either sheet -- set the hospital's DEXA tariff before use."
+  },
+  {
+   "modality": "DEXA",
+   "subGroup": "DEXA HIP & WRIST",
+   "item": "SPINE,HIP,WRIST",
+   "cash": null,
+   "online": null,
+   "note": "No rate given in either sheet -- set the hospital's DEXA tariff before use."
+  },
+  {
+   "modality": "DEXA",
+   "subGroup": "DEXA FULL BODY",
+   "item": "FULL  BODY",
+   "cash": null,
+   "online": null,
+   "note": "No rate given in either sheet -- set the hospital's DEXA tariff before use."
+  }
+ ],
+ "discounts": [
+  {
+   "code": "STAFF",
+   "label": "Staff",
+   "kind": "PERCENT",
+   "value": 100,
+   "requiresReason": true,
+   "requiresApproval": true
+  },
+  {
+   "code": "NEAREST_RELATIVE",
+   "label": "Nearest relative",
+   "kind": "PERCENT",
+   "value": 25,
+   "requiresReason": true,
+   "requiresApproval": false
+  },
+  {
+   "code": "DISTANT_RELATIVE",
+   "label": "Distant relative",
+   "kind": "PERCENT",
+   "value": 10,
+   "requiresReason": true,
+   "requiresApproval": false
+  }
+ ],
+ "excluded": [
+  "BLOOD (pathology/lab tests -- a different department, not radiology imaging)",
+  "OPD (consultation/procedure charges -- the OPD clinic's own billing, not radiology imaging)"
+ ]
+}

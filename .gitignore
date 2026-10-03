@@ -1,0 +1,5 @@
+data/*.db*
+node_modules
+web/dist
+.env
+data/demo-password.txt
