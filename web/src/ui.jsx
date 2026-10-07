@@ -16,12 +16,12 @@ export const isToday = (iso) => iso && new Date(iso).toDateString() === new Date
 export const STATUS_LABEL = {
   REQUESTED: 'Requested', ACKNOWLEDGED: 'Acknowledged', SCHEDULED: 'In queue', ARRIVED: 'Arrived', NO_SHOW: 'No show',
   PREPARED: 'Prepared', IN_PROGRESS: 'Scan in', COMPLETED: 'Scan out', REPORT_DRAFTED: 'Report draft', REPORTED: 'Finalised', DISPATCHED: 'Dispatched', COLLECTED: 'Collected', CANCELLED: 'Terminated',
-  AWAITING_PROTOCOL: 'Awaiting services'
+  WAITING: 'Waiting · assist', AT_ASSISTANT: 'With assistant', AWAITING_PROTOCOL: 'At modality', PROTOCOLLED: 'Protocolled'
 };
-const STATUS_TONE = { REQUESTED: 'warning', ACKNOWLEDGED: 'info', SCHEDULED: 'info', ARRIVED: 'violet', PREPARED: 'violet', NO_SHOW: 'danger', IN_PROGRESS: 'violet', COMPLETED: 'warning', REPORT_DRAFTED: 'warning', REPORTED: 'success', DISPATCHED: 'success', COLLECTED: 'success', CANCELLED: 'neutral', AWAITING_PROTOCOL: 'warning' };
+const STATUS_TONE = { REQUESTED: 'warning', ACKNOWLEDGED: 'info', SCHEDULED: 'info', ARRIVED: 'violet', PREPARED: 'violet', NO_SHOW: 'danger', IN_PROGRESS: 'violet', COMPLETED: 'warning', REPORT_DRAFTED: 'warning', REPORTED: 'success', DISPATCHED: 'success', COLLECTED: 'success', CANCELLED: 'neutral', WAITING: 'warning', AT_ASSISTANT: 'violet', AWAITING_PROTOCOL: 'info', PROTOCOLLED: 'success' };
 const PRIORITY_TONE = { STAT: 'danger', URGENT: 'warning', ROUTINE: 'neutral' };
 export const FLOW = ['REQUESTED', 'ACKNOWLEDGED', 'SCHEDULED', 'ARRIVED', 'PREPARED', 'IN_PROGRESS', 'COMPLETED', 'REPORT_DRAFTED', 'REPORTED', 'DISPATCHED', 'COLLECTED'];
-export const RADIOLOGY = ['radiologist', 'technologist', 'reception'];
+export const RADIOLOGY = ['radiologist', 'technologist', 'assistant', 'reception'];
 export const OPEN = ['REQUESTED', 'ACKNOWLEDGED', 'SCHEDULED', 'NO_SHOW', 'ARRIVED', 'PREPARED', 'IN_PROGRESS', 'COMPLETED', 'REPORT_DRAFTED'];
 export const FINAL = ['REPORTED', 'DISPATCHED', 'COLLECTED'];
 export const inr = (n) => `₹ ${Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
@@ -82,14 +82,23 @@ export function Stepper({ status }) {
   return <div className="stepper">{FLOW.map((s, i) => <span key={s} className={`step ${i < reached ? 'done' : i === reached ? 'current' : ''}`}>{i < reached && <Icon name="check" size={11} />}{STATUS_LABEL[s]}</span>)}</div>;
 }
 
-// Same anatomy as SSIE's IPD patient banner: identity, UHID/admission, consultant, location, allergy, status.
+// Same anatomy as SSIE's IPD patient banner: identity, OPD/IPD ID, consultant, location, allergy, status.
+export const visitId = (p = {}) => {
+  if (p.ipd_id) return `IPD ${p.ipd_id}`;
+  if (p.opd_id) return `OPD ${p.opd_id}`;
+  if (p.encounter_type === 'IPD' && p.encounter_ref) return p.encounter_ref;
+  if (p.encounter_type === 'OPD' && p.encounter_ref) return p.encounter_ref;
+  if (p.encounter_ref) return p.encounter_ref;
+  return p.mrn || '—';
+};
 export function PatientBanner({ o, status }) {
   const ipd = o.encounter_type === 'IPD';
   const allergic = o.allergy && o.allergy !== 'None recorded';
+  const idLabel = ipd ? 'IPD ID' : o.encounter_type === 'OPD' ? 'OPD ID' : 'Visit ID';
   return (
     <div className="patient-block"><div className="patient-strip">
       <div><span>Patient</span><strong>{o.patient_name || o.name}</strong><em>{ageOf(o.dob)}y · {o.sex} · DOB {fmtDate(o.dob)}</em></div>
-      <div><span>UHID / {ipd ? 'Admission' : 'Visit'}</span><strong>{o.mrn}</strong><em>{o.encounter_ref}</em></div>
+      <div><span>{idLabel}</span><strong>{visitId(o)}</strong><em>{o.encounter_ref && o.encounter_ref !== visitId(o) ? o.encounter_ref : (o.phone || '')}</em></div>
       <div><span>Consultant</span><strong>{o.consultant_name || '—'}</strong><em>{ENCOUNTER_LABEL[o.encounter_type] || o.encounter_type}{o.diagnosis ? ` · ${o.diagnosis}` : ''}</em></div>
       <div><span>Ward / Room / Bed</span><strong>{ipd ? `${o.ward || '—'} · ${o.room || '—'}` : 'Outpatient'}</strong><em>{ipd ? `Bed ${o.bed || '—'}` : 'No bed'}</em></div>
       <div><span>Allergy</span><strong className={allergic ? 'allergy' : ''}>{o.allergy}</strong></div>
@@ -128,11 +137,16 @@ export function useLoad(fn, deps = []) {
   const [tick, setTick] = useState(0);
   useEffect(() => {
     let live = true;
-    setState((s) => ({ ...s, loading: true }));
+    setState((s) => ({ ...s, loading: !s.data }));
     fn().then((data) => live && setState({ loading: false, data, error: null }), (error) => live && setState({ loading: false, data: null, error }));
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps, tick]);
+  useEffect(() => {
+    let unsub = () => {};
+    import('./sync.js').then((mod) => { unsub = mod.onSync(() => setTick((t) => t + 1)); });
+    return () => unsub();
+  }, []);
   return { ...state, reload: () => setTick((t) => t + 1) };
 }
 export function useAction() {

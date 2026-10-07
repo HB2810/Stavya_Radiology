@@ -18,7 +18,7 @@ export default function DayBoard({ user }) {
             <article className="kanban-card" key={o.id}>
               <button className="patient-link" onClick={() => go(`/patient/${o.patient_id}`)}><strong>{o.patient_name}</strong><span>{o.mrn} · {ENCOUNTER_LABEL[o.encounter_type] || o.encounter_type}{o.ward ? ` ${o.ward}` : ''}</span></button>
               <p>{o.exam_name}</p>
-              <div className="row-end"><PriorityBadge priority={o.priority} /><StatusBadge status={o.status} />{critical.some((c) => c.order_id === o.id && c.state !== 'ACKNOWLEDGED') && <Badge tone="danger">Critical</Badge>}</div>
+              <div className="cell-flags"><PriorityBadge priority={o.priority} /><StatusBadge status={o.status} />{critical.some((c) => c.order_id === o.id && c.state !== 'ACKNOWLEDGED') && <Badge tone="danger">Critical</Badge>}</div>
               <RowActions o={o} user={user} primaryOnly />
             </article>))}{!rows.length && <p className="note">Clear</p>}</div>
         </section>))}</div>

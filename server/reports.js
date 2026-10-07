@@ -107,7 +107,10 @@ export function signReport(reportId, body, user) {
     audit({ action: 'REPORT_SIGNED', actor: user, patientId: order.patient_id, resource: order.accession, details: { critical: declared === 'YES', hits } });
   });
   notify([order.requested_by, order.encounter_doctor_id].filter((i) => i !== user.id), { orderId: order.id, kind: 'REPORT_FINAL', text: `Report ready: ${order.exam_name} for ${order.patient_name}` });
-  return { report: db.prepare('SELECT * FROM reports WHERE id = ?').get(reportId), criticalCaseId: caseId };
+  const signed = db.prepare('SELECT * FROM reports WHERE id = ?').get(reportId);
+  const patient = db.prepare('SELECT * FROM patients WHERE id = ?').get(order.patient_id);
+  import('./integrations.js').then((m) => m.onReportSigned(order, patient, signed)).catch(() => {});
+  return { report: signed, criticalCaseId: caseId };
 }
 
 export function addAddendum(orderId, body, user) {

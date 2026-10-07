@@ -1,198 +1,227 @@
 import { useEffect, useRef, useState } from 'react';
+import Register from './Register.jsx';
 import { api, newKey } from '../api.js';
-import { Card, FormError, Icon, Notice, PageHeader, PatientBanner, go, toast, useAction, useLoad } from '../ui.jsx';
+import { Badge, Card, FormError, Icon, Notice, PageHeader, PatientBanner, go, toast, useAction, useLoad, visitId } from '../ui.jsx';
 
-const COPY = {
-  OPD_CONSULTANT: {
-    title: 'OPD · Consultant diagnostic',
-    steps: 'Consultant sent the patient for imaging. After the report, they go back to the consultant.',
-    pay: 'Payment is taken at OPD — enter the OPD receipt if already paid.'
-  },
-  OPD_FRONTDESK: {
-    title: 'OPD · Front desk / follow-up report',
-    steps: 'Front desk sent them for a report, or they came for a follow-up report as told last visit.',
-    pay: 'Collect payment at radiology before the scan starts.'
-  },
-  IPD: {
-    title: 'IPD / ward / ICU',
-    steps: 'Bed patient from the ward. Enter ward and bed. Charge goes on the IPD bill.',
-    pay: 'No cash at radiology.'
-  },
-  ER: {
-    title: 'Emergency',
-    steps: 'Casualty / emergency — STAT allowed. Token jumps the live queue.',
-    pay: 'No payment gate.'
-  },
-  WALKIN: {
-    title: 'Walk-in / outside referral',
-    steps: 'Outside doctor’s prescription. Register UHID if new, then issue a token.',
-    pay: 'Collect payment at radiology before the scan starts.'
-  }
-};
+const MODALITY_LABEL = { DEXA: 'DEXA', MRI: 'MRI', OPEN_MRI: 'Open MRI', XR: 'X-Ray', USG: 'Sonography', CT: 'CT Scan' };
+
+/** Visit paths for New entry. HIS channel wiring comes later — for now reception picks the visit type. */
+const VISITS = [
+  { code: 'OPD', channel: 'OPD_FRONTDESK', label: 'OPD', hint: 'Enter the OPD ID from the OPD module', needsVisitId: 'opd' },
+  { code: 'IPD', channel: 'IPD', label: 'IPD', hint: 'Enter the IPD ID from the ward / IPD module', needsVisitId: 'ipd' },
+  { code: 'WALKIN', channel: 'WALKIN', label: 'Walk-in', hint: 'Outside referral — search by name or phone, or register first', needsVisitId: null },
+  { code: 'ER', channel: 'ER', label: 'Emergency', hint: 'Casualty / STAT — search by name or phone', needsVisitId: null }
+];
 
 export default function ChannelEntry({ user, query = {} }) {
-  const channels = useLoad(() => api.get('/masters/channels'));
-  const exams = useLoad(() => api.get('/catalog/exams'));
+  const cats = useLoad(() => api.get('/cases/categories'));
   const clinicians = useLoad(() => api.get('/clinicians'));
-  const [channel, setChannel] = useState(query.channel || '');
+  const preset = VISITS.find((v) => v.channel === query.channel || v.code === query.visit)?.code || '';
+  const [visit, setVisit] = useState(preset);
+  const [registering, setRegistering] = useState(false);
+  const [visitIdVal, setVisitIdVal] = useState('');
   const [q, setQ] = useState(''); const [results, setResults] = useState([]);
   const [patient, setPatient] = useState(null); const [overview, setOverview] = useState(null);
   const [enc, setEnc] = useState(''); const [indication, setIndication] = useState('');
-  const [exam, setExam] = useState(''); const [priority, setPriority] = useState('ROUTINE');
-  const [paidAtOpd, setPaidAtOpd] = useState(false); const [paymentRef, setPaymentRef] = useState('');
+  const [sel, setSel] = useState([]); const [priority, setPriority] = useState('ROUTINE');
   const [doctorId, setDoctorId] = useState(''); const [ward, setWard] = useState(''); const [bed, setBed] = useState('');
-  const [dup, setDup] = useState(''); const a = useAction(); const key = useRef(newKey());
+  const a = useAction(); const key = useRef(newKey());
 
-  const ch = channels.data?.find((c) => c.code === channel);
-  const copy = COPY[channel] || { title: ch?.name || 'Entry', steps: ch?.notes || '', pay: '' };
+  const v = VISITS.find((x) => x.code === visit) || null;
+  const list = cats.data || [];
+  const channel = v?.channel || '';
 
-  useEffect(() => { if (query.channel) setChannel(query.channel); }, [query.channel]);
-  useEffect(() => { if (ch) setPriority(ch.default_priority || 'ROUTINE'); }, [channel, ch?.code]);
-  useEffect(() => { if (q.trim().length < 2) return setResults([]); const t = setTimeout(() => api.get('/patients?q=' + encodeURIComponent(q.trim())).then(setResults).catch(() => {}), 250); return () => clearTimeout(t); }, [q]);
-
-  const pick = async (p) => {
-    setPatient(p); setResults([]); setQ('');
-    const o = await api.get('/patients/' + p.id); setOverview(o);
-    const active = o.encounters.filter((e) => e.status === 'ACTIVE');
-    const prefer = ch?.encounter_type ? active.find((e) => e.type === ch.encounter_type) : active[0];
-    setEnc(prefer?.id || '');
-    if (prefer?.ward) setWard(prefer.ward);
-    if (prefer?.bed) setBed(prefer.bed || '');
-    if (prefer?.doctor_id) setDoctorId(prefer.doctor_id);
-  };
-
-  const ensureEncounter = async () => {
-    if (enc) return enc;
-    if (!patient || !ch) return '';
-    const refNo = `${ch.encounter_type}-${Date.now().toString(36).toUpperCase()}`;
-    const body = { type: ch.encounter_type, refNo };
-    if (ch.encounter_type === 'IPD') {
-      if (!ward.trim()) throw new Error('Ward is required for IPD');
-      body.ward = ward.trim(); body.bed = bed.trim() || undefined;
+  useEffect(() => {
+    if (query.channel) {
+      const match = VISITS.find((x) => x.channel === query.channel || x.code === query.channel);
+      if (match) setVisit(match.code);
     }
-    if (doctorId) body.doctorId = doctorId;
-    else if (ch.code === 'OPD_CONSULTANT' && clinicians.data?.[0]) body.doctorId = clinicians.data[0].id;
-    const created = await api.post(`/patients/${patient.id}/encounters`, body);
-    const o = await api.get('/patients/' + patient.id); setOverview(o); setEnc(created.id);
-    return created.id;
-  };
+  }, [query.channel]);
 
-  const send = (confirmDuplicate = false) => a.run(async () => {
-    const encounterId = enc || await ensureEncounter();
-    if (!encounterId) throw new Error('Could not open an encounter for this patient');
-    try {
-      const body = {
-        patientId: patient.id, encounterId, examCode: exam, priority, clinicalIndication: indication,
-        channelCode: channel, confirmDuplicate, paidAtOpd, paymentRef: paymentRef || undefined
-      };
-      const r = await api.post('/orders', body, { key: key.current });
-      key.current = newKey();
-      toast(`Token ${r.order.token_no} issued · est. ${r.order.eta_at ? new Date(r.order.eta_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '—'}`);
-      go('/desk');
-    } catch (e) {
-      if (e.code === 'POSSIBLE_DUPLICATE') setDup(e.message); else throw e;
+  useEffect(() => {
+    if (visit === 'ER') setPriority('STAT');
+    else if (visit === 'IPD') setPriority('URGENT');
+    else setPriority('ROUTINE');
+  }, [visit]);
+
+  useEffect(() => {
+    if (v?.needsVisitId) return; // OPD/IPD use dedicated ID lookup
+    if (q.trim().length < 2) return setResults([]);
+    const t = setTimeout(() => api.get('/patients?q=' + encodeURIComponent(q.trim())).then(setResults).catch(() => {}), 250);
+    return () => clearTimeout(t);
+  }, [q, v?.needsVisitId]);
+
+  const lookupByVisitId = () => a.run(async () => {
+    const id = visitIdVal.trim();
+    if (!id) throw new Error(v.needsVisitId === 'ipd' ? 'Enter the IPD ID' : 'Enter the OPD ID');
+    const body = v.needsVisitId === 'ipd' ? { ipdId: id } : { opdId: id };
+    const rows = await api.post('/registration/lookup', body);
+    if (!rows.length) {
+      setResults([]);
+      toast(`No patient found. Choose Add new patient to continue.`, true);
+      return;
     }
+    if (rows.length === 1) await pick(rows[0]);
+    else setResults(rows);
   });
 
-  const active = overview?.encounters.filter((e) => e.status === 'ACTIVE') || [];
-  const chosen = exams.data?.find((e) => e.code === exam);
-  const priorities = ch?.allow_stat_reception || ['clinician', 'nurse', 'radiologist'].includes(user.role)
+  const pick = async (p) => {
+    const full = await api.get('/patients/' + p.id);
+    setPatient(full.patient || p);
+    setOverview(full);
+    setResults([]); setQ(''); setVisitIdVal('');
+    const active = (full.encounters || []).filter((e) => e.status === 'ACTIVE');
+    const type = v?.code === 'IPD' ? 'IPD' : v?.code === 'OPD' ? 'OPD' : 'EXTERNAL';
+    const prefer = active.find((e) => e.type === type);
+    setEnc(prefer?.id || '');
+    setWard(prefer?.ward || ''); setBed(prefer?.bed || ''); setDoctorId(prefer?.doctor_id || '');
+  };
+
+  const toggle = (m) => setSel((s) => (s.includes(m) ? s.filter((x) => x !== m) : [...s, m]));
+
+  const send = () => a.run(async () => {
+    const body = {
+      patientId: patient.id,
+      channelCode: channel,
+      modalities: sel,
+      clinicalIndication: indication.trim(),
+      priority
+    };
+    if (enc) body.encounterId = enc;
+    if (doctorId) body.doctorId = doctorId;
+    if (v.code === 'IPD' && !enc) {
+      body.ward = ward.trim();
+      if (bed.trim()) body.bed = bed.trim();
+    }
+    const idForVisit = patient.opd_id || patient.ipd_id || visitIdVal.trim();
+    if (v.needsVisitId === 'opd') body.opdId = patient.opd_id || visitIdVal.trim() || idForVisit;
+    if (v.needsVisitId === 'ipd') body.ipdId = patient.ipd_id || visitIdVal.trim() || idForVisit;
+    if (idForVisit) body.visitId = idForVisit;
+
+    const r = await api.post('/cases', body, { key: key.current });
+    key.current = newKey();
+    const tokens = (r.modalities || []).map((m) => m.token_no).filter(Boolean);
+    toast(`Case ${r.case_no} opened${tokens.length ? ` · token ${tokens.join(', ')}` : ''} — assistant queue`);
+    go('/desk');
+  });
+
+  const encounterType = v?.code === 'IPD' ? 'IPD' : v?.code === 'OPD' ? 'OPD' : 'EXTERNAL';
+  const active = overview?.encounters?.filter((e) => e.status === 'ACTIVE' && e.type === encounterType) || [];
+  const priorities = visit === 'ER' || ['clinician', 'nurse', 'radiologist'].includes(user.role)
     ? ['ROUTINE', 'URGENT', 'STAT'] : ['ROUTINE', 'URGENT'];
+  const ok = v && patient && sel.length > 0 && indication.trim().length >= 5
+    && !(v?.code === 'IPD' && !enc && !ward.trim());
 
   return (
     <>
-      <PageHeader title={copy.title} subtitle={copy.steps}
-        actions={<button className="btn btn-light" onClick={() => go('/desk')}>Back to desk</button>} />
+      <PageHeader
+        title="Add patient / visit"
+        subtitle="Choose the visit, find or add the patient, then select imaging categories."
+        actions={<button className="btn btn-light" onClick={() => go('/desk')}>Back to desk</button>}
+      />
 
-      <Notice>No appointment slot. On save, the system issues a token and a waiting estimate from who is already in that machine’s queue. The estimate changes if ER / STAT / IPD jump ahead.</Notice>
+      <ol className="stepper entry-steps" aria-label="Visit progress">{['Visit type', 'Patient', 'Imaging categories'].map((label, i) => <li key={label} className={`step ${i === (!v ? 0 : !patient ? 1 : 2) ? 'current' : i < (!v ? 0 : !patient ? 1 : 2) ? 'done' : ''}`}>{i + 1}. {label}</li>)}</ol>
 
-      {!channel && (
-        <Card title="1. How did this patient arrive?" icon="command">
-          <div className="channel-tiles compact">
-            {(channels.data || []).map((c) => (
-              <button key={c.code} type="button" className={`channel-tile ${c.code === 'ER' ? 'urgent' : ''}`} onClick={() => setChannel(c.code)}>
-                <strong>{c.name}</strong>
-                <span>{(COPY[c.code] || {}).steps || c.notes}</span>
-              </button>
-            ))}
-          </div>
-        </Card>
-      )}
+      <Card title="1. Visit type" icon="command">
+        <div className="seg" style={{ flexWrap: 'wrap' }}>
+          {VISITS.map((x) => (
+            <button key={x.code} type="button" className={visit === x.code ? 'on' : ''} onClick={() => { setRegistering(false); setVisit(x.code); setPatient(null); setOverview(null); setResults([]); setQ(''); setVisitIdVal(''); setEnc(''); }}>
+              {x.label}
+            </button>
+          ))}
+        </div>
+        {v && <p className="note" style={{ marginBottom: 0 }}>{v.hint}</p>}
+      </Card>
 
-      {channel && (
-        <>
-          <div className="row-gap" style={{ marginBottom: 12 }}>
-            <button className="btn btn-light btn-sm" onClick={() => setChannel('')}>Change channel</button>
-            <span className="note" style={{ margin: 0 }}>{copy.pay}</span>
-          </div>
-          <div className="grid-2">
-            <Card title="2. Patient" icon="patients" actions={patient && <button className="btn btn-light btn-sm" onClick={() => { setPatient(null); setOverview(null); setEnc(''); }}>Change</button>}>
-              {!patient ? (<>
-                <label className="search-box" style={{ maxWidth: 'none' }}><Icon name="search" size={14} /><input autoFocus placeholder="Search name, UHID or phone" value={q} onChange={(e) => setQ(e.target.value)} /></label>
-                <div className="pick-list">{results.map((p) => <button key={p.id} className="pick" onClick={() => pick(p)}><strong>{p.name}</strong><span>{p.mrn} · {p.dob} · {p.sex}</span></button>)}</div>
-                {(ch?.code === 'WALKIN' || ch?.quick_entry) && (
-                  <button className="btn btn-light" onClick={() => go('/register')}>{ch.quick_entry ? 'Quick-register new patient' : 'New patient — walk-in register'}</button>
-                )}
-              </>) : (<>
-                <PatientBanner o={{ ...patient, patient_name: patient.name, encounter_type: active.find((e) => e.id === enc)?.type || ch.encounter_type, ward, bed }} />
+      {v && (
+        <div className={patient ? 'grid-2' : 'entry-patient-step'}>
+          <Card title="2. Patient" icon="patients" actions={patient && <button className="btn btn-light btn-sm" onClick={() => { setRegistering(false); setPatient(null); setOverview(null); setEnc(''); }}>Change</button>}>
+            {!patient ? (registering ? <Register embedded onCancel={() => setRegistering(false)} onSaved={(p) => a.run(async () => { await pick(p); setRegistering(false); })} /> : <>
+              {v.needsVisitId ? (
                 <div className="form-grid">
-                  {active.length > 0 && (
-                    <label className="wide"><span>Open visit</span>
-                      <select value={enc} onChange={(e) => setEnc(e.target.value)}>
-                        <option value="">Open new {ch.encounter_type} on submit</option>
-                        {active.map((e) => <option key={e.id} value={e.id}>{e.type} {e.ref_no}{e.ward ? ` · ${e.ward}` : ''}</option>)}
-                      </select>
-                    </label>
-                  )}
-                  {(ch.code === 'OPD_CONSULTANT' || ch.code === 'OPD_FRONTDESK') && (
-                    <label className="wide"><span>Consultant</span>
-                      <select value={doctorId} onChange={(e) => setDoctorId(e.target.value)}>
-                        <option value="">Select…</option>
-                        {(clinicians.data || []).map((d) => <option key={d.id} value={d.id}>{d.full_name}</option>)}
-                      </select>
-                    </label>
-                  )}
-                  {ch.encounter_type === 'IPD' && !enc && (<>
-                    <label><span>Ward</span><input value={ward} onChange={(e) => setWard(e.target.value)} placeholder="e.g. HDU" /></label>
-                    <label><span>Bed</span><input value={bed} onChange={(e) => setBed(e.target.value)} /></label>
-                  </>)}
+                  <label className="wide"><span>{v.needsVisitId === 'ipd' ? 'IPD ID *' : 'OPD ID *'}</span>
+                    <input autoFocus value={visitIdVal} onChange={(e) => setVisitIdVal(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && lookupByVisitId()}
+                      placeholder={v.needsVisitId === 'ipd' ? 'e.g. IPD number from ward' : 'e.g. OPD number from OPD'} /></label>
+                  <div className="wide row-gap" style={{ justifyContent: 'space-between' }}>
+                    <button type="button" className="btn btn-light" onClick={() => setRegistering(true)}>Add new patient</button>
+                    <button type="button" className="btn btn-primary" disabled={!visitIdVal.trim() || a.busy} onClick={lookupByVisitId}>{a.busy ? 'Looking…' : 'Find'}</button>
+                  </div>
                 </div>
+              ) : (<>
+                <label className="search-box" style={{ maxWidth: 'none' }}><Icon name="search" size={14} /><input autoFocus placeholder="Search name or phone" value={q} onChange={(e) => setQ(e.target.value)} /></label>
+                <button className="btn btn-light" style={{ marginTop: 8 }} onClick={() => setRegistering(true)}>Add new patient</button>
               </>)}
-            </Card>
-
-            <Card title="3. Study" icon="orders">
-              <div className="form-grid">
-                <label className="wide"><span>Clinical indication</span><textarea rows={3} value={indication} onChange={(e) => setIndication(e.target.value)} placeholder="Why this study?" /></label>
-                <label className="wide"><span>Study</span>
-                  <select value={exam} onChange={(e) => setExam(e.target.value)}>
-                    <option value="">Select…</option>
-                    {exams.data?.map((e) => <option key={e.code} value={e.code} disabled={e.price == null}>{e.modality} · {e.name}</option>)}
-                  </select>
-                </label>
-                <div className="wide"><span className="chart-title">Priority</span>
-                  <div className="seg">{priorities.map((p) => <button key={p} className={priority === p ? `on ${p}` : ''} onClick={() => setPriority(p)}>{p}</button>)}</div>
+              {results.length > 0 && (
+                <div className="pick-list" style={{ marginTop: 10 }}>
+                  {results.map((p) => <button key={p.id} type="button" className="pick" onClick={() => pick(p)}><strong>{p.name}</strong><span>{visitId(p)} · {p.dob} · {p.sex}</span></button>)}
                 </div>
-                {ch.payment_place === 'OPD' && (
-                  <div className="wide form-grid">
-                    <label className="check-row wide"><input type="checkbox" checked={paidAtOpd} onChange={(e) => setPaidAtOpd(e.target.checked)} /><span>Already paid at OPD</span></label>
-                    {paidAtOpd && <label className="wide"><span>OPD receipt / bill no.</span><input value={paymentRef} onChange={(e) => setPaymentRef(e.target.value)} /></label>}
+              )}
+            </>) : (<>
+              <PatientBanner o={{
+                ...patient,
+                patient_name: patient.name,
+                encounter_type: active.find((e) => e.id === enc)?.type || (v.code === 'IPD' ? 'IPD' : v.code === 'OPD' ? 'OPD' : 'EXTERNAL'),
+                ward, bed
+              }} />
+              <div className="form-grid">
+                {active.length > 0 && (
+                  <label className="wide"><span>Open visit</span>
+                    <select value={enc} onChange={(e) => setEnc(e.target.value)}>
+                      <option value="">Open new {v.code === 'WALKIN' || v.code === 'ER' ? 'visit' : v.code} on submit</option>
+                      {active.map((e) => <option key={e.id} value={e.id}>{e.type} {e.ref_no}{e.ward ? ` · ${e.ward}` : ''}</option>)}
+                    </select>
+                  </label>
+                )}
+                {(v.code === 'OPD') && (
+                  <label className="wide"><span>Consultant</span>
+                    <select value={doctorId} onChange={(e) => setDoctorId(e.target.value)}>
+                      <option value="">Select…</option>
+                      {(clinicians.data || []).map((d) => <option key={d.id} value={d.id}>{d.full_name}</option>)}
+                    </select>
+                  </label>
+                )}
+                {v.code === 'IPD' && !enc && (<>
+                  <label><span>Ward *</span><input value={ward} onChange={(e) => setWard(e.target.value)} placeholder="e.g. HDU" /></label>
+                  <label><span>Bed</span><input value={bed} onChange={(e) => setBed(e.target.value)} /></label>
+                </>)}
+              </div>
+            </>)}
+          </Card>
+
+          {patient && <Card title="3. Imaging categories" icon="scan" subtitle="Main categories only — not individual exams">
+            <div className="form-grid">
+              <label className="wide"><span>Clinical indication *</span><textarea rows={3} value={indication} onChange={(e) => setIndication(e.target.value)} placeholder="Why this study? (min. 5 characters)" /></label>
+              <div className="wide">
+                <span className="chart-title">Categories *</span>
+                {cats.loading ? <p className="note">Loading…</p> : (
+                  <div className="chips" style={{ marginTop: 6 }}>
+                    {list.map((c) => {
+                      const code = c.modality;
+                      const on = sel.includes(code);
+                      return (
+                        <button key={code} type="button" className={`chip ${on ? 'on' : ''}`} onClick={() => toggle(code)}>
+                          {MODALITY_LABEL[code] || c.label || code}
+                          {c.services != null && <Badge tone="neutral">{c.services}</Badge>}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
-                {chosen?.prep && <Notice>Prep: {chosen.prep}</Notice>}
               </div>
-            </Card>
-          </div>
-        </>
+              <div className="wide"><span className="chart-title">Priority</span>
+                <div className="seg">{priorities.map((p) => <button key={p} type="button" className={priority === p ? `on ${p}` : ''} onClick={() => setPriority(p)}>{p}</button>)}</div>
+              </div>
+            </div>
+          </Card>}
+        </div>
       )}
 
-      {dup && <div className="confirm-line"><Icon name="critical" size={14} /><span>{dup}</span>
-        <span className="row-gap"><button className="btn btn-light btn-sm" onClick={() => setDup('')}>Cancel</button>
-          <button className="btn btn-primary btn-sm" onClick={() => { setDup(''); send(true); }}>Order anyway</button></span></div>}
       <FormError error={a.error} />
-      {channel && (
-        <div className="row-gap" style={{ justifyContent: 'flex-end' }}>
-          <button className="btn btn-primary" disabled={a.busy || !patient || !exam || indication.trim().length < 5 || (paidAtOpd && !paymentRef.trim()) || (ch?.encounter_type === 'IPD' && !enc && !ward.trim())}
-            onClick={() => send(false)}>{a.busy ? 'Issuing…' : 'Issue token → desk'}</button>
+      {v && patient && (
+        <div className="row-gap" style={{ justifyContent: 'space-between' }}>
+          <span className="mono">{sel.length ? sel.map((m) => MODALITY_LABEL[m] || m).join(', ') : 'Select categories'}</span>
+          <button className="btn btn-primary" disabled={a.busy || !ok} onClick={send}>{a.busy ? 'Opening…' : 'Save visit & add to queue'}</button>
         </div>
       )}
     </>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api } from './api.js';
-import { Badge, Empty, ENCOUNTER_LABEL, Icon, Modal, PriorityBadge, RADIOLOGY, StatusBadge, fmt, go, toast, useAction, useData } from './ui.jsx';
+import { Badge, Empty, ENCOUNTER_LABEL, Icon, Modal, PriorityBadge, RADIOLOGY, StatusBadge, fmt, go, toast, useAction, useData, visitId } from './ui.jsx';
 
 /** The one action this person should take next on this order. No manual time booking — queue is automatic. */
 export function nextAction(o, user, criticalOpen) {
@@ -43,11 +43,11 @@ export function ArrivalModal({ order, onClose }) {
   const move = useMove(); const [ok, setOk] = useState(false); const a = useAction();
   return (
     <Modal title="Verify arrival" icon="user" onClose={onClose}
-      foot={<><button className="btn btn-light" onClick={onClose}>Cancel</button><button className="btn btn-primary" disabled={!ok || a.busy} onClick={() => a.run(async () => { if (await move(order, 'ARRIVED', { note: 'Identity verified: UHID and date of birth' })) onClose(); })}>Patient has arrived</button></>}>
+      foot={<><button className="btn btn-light" onClick={onClose}>Cancel</button><button className="btn btn-primary" disabled={!ok || a.busy} onClick={() => a.run(async () => { if (await move(order, 'ARRIVED', { note: 'Identity verified: OPD/IPD ID and date of birth' })) onClose(); })}>Patient has arrived</button></>}>
       <div className="confirm-line"><Icon name="critical" size={14} />Ask the patient to state their name and date of birth. Do not read them out.</div>
       {order.token_no && <p className="note" style={{ marginTop: 0 }}>Token <b>{order.token_no}</b>{order.eta_at ? ` · waiting estimate ${fmt(order.eta_at)}` : ''} (estimate only — queue moves with load)</p>}
-      <dl className="defs"><div><dt>Name</dt><dd>{order.patient_name}</dd></div><div><dt>UHID</dt><dd>{order.mrn}</dd></div><div><dt>Date of birth</dt><dd>{order.dob}</dd></div><div><dt>Allergy</dt><dd className={order.allergy !== 'None recorded' ? 'allergy-text' : ''}>{order.allergy}</dd></div></dl>
-      <label className="check-row"><input type="checkbox" checked={ok} onChange={(e) => setOk(e.target.checked)} /><span>UHID and date of birth match what the patient told me</span></label>
+      <dl className="defs"><div><dt>Name</dt><dd>{order.patient_name}</dd></div><div><dt>OPD / IPD ID</dt><dd>{order.mrn}</dd></div><div><dt>Date of birth</dt><dd>{order.dob}</dd></div><div><dt>Allergy</dt><dd className={order.allergy !== 'None recorded' ? 'allergy-text' : ''}>{order.allergy}</dd></div></dl>
+      <label className="check-row"><input type="checkbox" checked={ok} onChange={(e) => setOk(e.target.checked)} /><span>OPD/IPD ID and date of birth match what the patient told me</span></label>
     </Modal>
   );
 }
@@ -78,7 +78,7 @@ export function RowActions({ o, user, primaryOnly }) {
 }
 
 export function PatientCell({ o }) {
-  return <button className="patient-link" onClick={(e) => { e.stopPropagation(); go(`/patient/${o.patient_id}`); }}><strong>{o.patient_name}</strong><span>{o.mrn} · {ENCOUNTER_LABEL[o.encounter_type] || o.encounter_type}{o.ward ? ` ${o.ward}` : ''}</span></button>;
+  return <button className="patient-link" onClick={(e) => { e.stopPropagation(); go(`/patient/${o.patient_id}`); }}><strong>{o.patient_name}</strong><span>{visitId(o)} · {ENCOUNTER_LABEL[o.encounter_type] || o.encounter_type}{o.ward ? ` ${o.ward}` : ''}</span></button>;
 }
 
 export function QueueTable({ rows, user, compact, emptyTitle, emptyDetail }) {
@@ -86,7 +86,7 @@ export function QueueTable({ rows, user, compact, emptyTitle, emptyDetail }) {
   if (!rows.length) return <Empty title={emptyTitle || 'No studies here'} detail={emptyDetail} />;
   return (
     <div className="table-scroll"><table className={`clinical-table queue${compact ? ' compact' : ''}`}>
-      <thead><tr><th>Patient / UHID</th><th>Study</th><th>Priority / status</th><th>Queue</th><th className="col-action">Action</th></tr></thead>
+      <thead><tr><th>Patient / ID</th><th>Study</th><th>Priority / status</th><th>Queue</th><th className="col-action">Action</th></tr></thead>
       <tbody>{rows.map((o) => (
         <tr key={o.id} className={o.overdue ? 'late-mark' : ''}>
           <td><PatientCell o={o} /></td>
@@ -110,7 +110,7 @@ export function QueueTable({ rows, user, compact, emptyTitle, emptyDetail }) {
 export function FilterTools({ f, set, staff, modalities }) {
   return (
     <>
-      <label className="search-box"><Icon name="search" size={14} /><input placeholder="Search patient, UHID or accession" value={f.q} onChange={(e) => set({ ...f, q: e.target.value })} /></label>
+      <label className="search-box"><Icon name="search" size={14} /><input placeholder="Search patient, OPD/IPD ID or accession" value={f.q} onChange={(e) => set({ ...f, q: e.target.value })} /></label>
       <select className={f.priority ? 'on' : ''} value={f.priority} onChange={(e) => set({ ...f, priority: e.target.value })}><option value="">Priority</option><option>STAT</option><option>URGENT</option><option>ROUTINE</option></select>
       <select className={f.modality ? 'on' : ''} value={f.modality} onChange={(e) => set({ ...f, modality: e.target.value })}><option value="">Modality</option>{modalities.map((m) => <option key={m}>{m}</option>)}</select>
       {staff && <select className={f.source ? 'on' : ''} value={f.source} onChange={(e) => set({ ...f, source: e.target.value })}><option value="">Encounter</option><option value="OPD">OPD</option><option value="IPD">IPD</option><option value="OT">OT</option><option value="EXTERNAL">{ENCOUNTER_LABEL.EXTERNAL}</option></select>}

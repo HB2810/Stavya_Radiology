@@ -15,6 +15,21 @@
 .msg.mine { align-self: flex-end; background: var(--blue-soft); border-color: var(--blue-line); }
 .msg small { display: block; color: var(--muted); font-size: 11px; margin-bottom: 2px; } .msg div { font-size: var(--text-sm); }
 .compose { display: flex; gap: 8px; } .compose input { flex: 1; height: 36px; border: 1px solid var(--line-strong); border-radius: 7px; padding: 0 10px; font-size: var(--text-sm); }
+label.check { display: flex; align-items: flex-start; gap: 8px; font-size: var(--text-sm); font-weight: 600; padding: 8px 0; }
+label.check input { margin-top: 2px; }
+.traffic-optional-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--canvas); }
+.traffic-optional-bar strong { display: block; } .traffic-optional-bar .table-sub { display: block; margin-top: 2px; }
+label.check-row { display: flex; align-items: center; gap: 8px; font-size: var(--text-sm); font-weight: 600; }
+
+.sync-pill { font-size: 11px; font-weight: 700; letter-spacing: 0.02em; color: var(--blue-hover); background: var(--blue-soft); border: 1px solid var(--blue-line); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+.demo-tabs { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.demo-tabs-title { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+.demo-tabs-title code { font-family: var(--font-mono); font-size: 11px; }
+.demo-tab-grid { display: grid; gap: 8px; }
+.demo-tab-card { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--canvas); }
+.demo-tab-card strong { font-size: 13px; }
+.demo-tab-card > span { font-size: 11.5px; color: var(--muted); }
+.demo-tab-actions { display: flex; gap: 6px; margin-top: 8px; }
 .inline-input { width: 100%; height: 36px; border: 1px solid var(--line-strong); border-radius: 7px; padding: 0 10px; font-size: var(--text-sm); background: #fff; }
 .field-label input, .field-label select { width: 100%; height: 36px; border: 1px solid var(--line-strong); border-radius: 7px; padding: 0 10px; font-size: var(--text-sm); background: #fff; }
 .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); align-items: start; }
@@ -57,6 +72,28 @@
 .table-group-row td { background: var(--canvas); font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding-top: 7px; padding-bottom: 7px; border-bottom: 1px solid var(--line); }
 .table-group-row.sub td { padding-left: 20px; font-weight: 700; color: var(--navy-2); background: #fff; }
 
+/* Reception desk hub — New entry / Register / Registrations / Search */
+.desk-hub { margin-bottom: var(--s-4); }
+.desk-hub-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;
+}
+.desk-hub-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  text-align: left; border: 1px solid var(--line-strong); background: #fff;
+  border-radius: 12px; padding: 14px; cursor: pointer; min-width: 0;
+  font: inherit; color: inherit; transition: border-color .15s, box-shadow .15s;
+}
+.desk-hub-card:hover { border-color: var(--blue); box-shadow: 0 6px 18px rgba(15, 40, 80, .06); }
+.desk-hub-card.primary { border-color: var(--blue-line); background: var(--blue-soft); }
+.desk-hub-card.primary:hover { border-color: var(--blue); }
+.desk-hub-card strong { font-size: 14px; color: var(--navy); display: inline-flex; align-items: center; gap: 6px; }
+.desk-hub-card span { font-size: 12px; color: var(--muted); line-height: 1.35; }
+.desk-hub-card.search { cursor: default; }
+.desk-hub-card.search:hover { border-color: var(--line-strong); box-shadow: none; }
+.desk-hub-hits { margin-top: 8px; max-height: 220px; overflow: auto; width: 100%; }
+@media (max-width: 1100px) { .desk-hub-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .desk-hub-grid { grid-template-columns: 1fr; } }
+
 /* Reception: channel launch tiles (data-entry front door) */
 .channel-launch { margin-bottom: var(--s-4); }
 .channel-launch-head { margin-bottom: 12px; }
@@ -67,9 +104,10 @@
 .channel-tile {
   display: flex; flex-direction: column; gap: 6px; text-align: left;
   border: 1px solid var(--line-strong); background: #fff; border-radius: 12px; padding: 14px 14px 12px;
-  cursor: pointer; min-height: 118px; transition: border-color .15s, transform .15s, box-shadow .15s;
+  cursor: pointer; min-height: 118px; min-width: 0; overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
 }
-.channel-tile:hover { border-color: var(--blue); box-shadow: 0 6px 18px rgba(15, 40, 80, .06); transform: translateY(-1px); }
+.channel-tile:hover { border-color: var(--blue); box-shadow: 0 6px 18px rgba(15, 40, 80, .06); }
 .channel-tile.urgent { border-color: #f0b4b4; background: linear-gradient(180deg, #fff8f8, #fff); }
 .channel-tile-kicker { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--blue); }
 .channel-tile strong { font-size: 14px; line-height: 1.25; color: var(--navy); }
@@ -128,8 +166,20 @@
   50% { box-shadow: 0 0 0 4px rgba(37, 99, 235, .18); }
 }
 .patient-link { display: inline-flex; align-items: center; gap: 8px; }
+.desk-table .patient-link { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
 .patient-link .avatar.xs { width: 28px; height: 28px; font-size: 10px; flex: 0 0 auto; }
 .desk-table .cell-flags { margin-bottom: 2px; }
+.smart-copy p {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;
+}
+.smart-copy .smart-why {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.smart-acts .row-actions { flex-wrap: wrap; max-width: 100%; }
+.cell-flags .status-badge { flex: 0 1 auto; }
 .notice .linkish {
   display: inline; border: 0; background: none; padding: 0; margin: 0;
   color: inherit; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer;
@@ -148,3 +198,304 @@
 .category-tile.on { border-color: var(--blue); background: var(--blue-soft); }
 .category-tile strong { font-size: 14px; color: var(--navy); }
 .category-tile span { font-size: 11.5px; color: var(--muted); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Anti-overlap / responsive containment
+   Cards, grids and fixed chrome must never paint over neighbours.
+   ═══════════════════════════════════════════════════════════════════ */
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+#root {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+.main-content,
+.page-shell {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+.page-shell > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Grid children must be allowed to shrink below content size */
+.grid-2,
+.register-layout,
+.summary-layout,
+.dash-grid,
+.content-grid,
+.split,
+.form-grid,
+.channel-tiles,
+.category-grid,
+.desk-pay-strip,
+.kpi-strip,
+.insight-grid,
+.patient-grid,
+.room-grid,
+.sum-strip {
+  width: 100%;
+  max-width: 100%;
+}
+.grid-2 > *,
+.register-layout > *,
+.summary-layout > *,
+.dash-grid > *,
+.content-grid > *,
+.split > *,
+.form-grid > *,
+.channel-tiles > *,
+.category-grid > *,
+.desk-pay-strip > *,
+.kpi-strip > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Prefer gap over card margins inside grids — prevents stacked spacing collisions */
+.grid-2 > .card,
+.register-layout > .card,
+.summary-layout > .card,
+.dash-grid .card,
+.content-grid .card {
+  margin-bottom: 0;
+}
+.page-shell > .card { margin-bottom: var(--s-4); }
+.page-shell > .card:last-child { margin-bottom: 0; }
+
+.register-layout { grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); }
+.summary-layout { grid-template-columns: minmax(200px, 260px) minmax(0, 1fr); }
+.form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.split { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); }
+
+.card,
+  .channel-launch,
+  .desk-hub,
+  .desk-pay-banner,
+  .desk-focus,
+.notice,
+.order-card,
+.confirm-line,
+.kpi-strip {
+  max-width: 100%;
+  min-width: 0;
+}
+.card,
+.order-card,
+.channel-tile,
+.category-tile,
+.desk-pay-chip {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Hover lift was painting over neighbouring tiles */
+.channel-tile { position: relative; z-index: 0; }
+.channel-tile:hover,
+.channel-tile:focus-visible {
+  transform: none;
+  z-index: 1;
+}
+.channel-tile strong,
+.channel-tile span,
+.channel-tile em {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.table-scroll {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.clinical-table.desk-table { min-width: 920px; }
+.seg { max-width: 100%; overflow-x: auto; }
+.traffic-optional-bar { flex-wrap: wrap; }
+.card-tools { flex-wrap: wrap; gap: 8px; max-width: 100%; }
+.card-head-actions { flex-wrap: wrap; max-width: 100%; }
+.page-header { max-width: 100%; }
+.page-actions { max-width: 100%; }
+.notice { display: flex; gap: 8px; align-items: flex-start; overflow-wrap: anywhere; }
+.notice > span { min-width: 0; flex: 1; }
+.confirm-line { flex-wrap: wrap; }
+.row-gap { max-width: 100%; }
+.app-header { gap: 8px; min-width: 0; }
+.header-left,
+.header-right { min-width: 0; }
+.header-right { overflow: hidden; }
+
+/* Touch-friendly controls on coarse pointers */
+@media (pointer: coarse) {
+  .btn, .desk-focus-btn, .channel-tile, .seg button, .icon-button {
+    min-height: 44px;
+  }
+  .channel-tile { min-height: 112px; }
+  .app-sidebar nav a { min-height: 44px; }
+  .clinical-table.queue .row-actions button,
+  .row-actions button {
+    min-height: 36px;
+    padding-inline: 10px;
+  }
+}
+
+/* Large tablet: collapse columns before they crush each other */
+@media (max-width: 1200px) {
+  .channel-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kpi-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sync-pill { display: none; }
+}
+
+@media (max-width: 1100px) {
+  .register-layout,
+  .summary-layout,
+  .grid-2,
+  .form-grid,
+  .split { grid-template-columns: 1fr; }
+  .form-grid .wide { grid-column: auto; }
+  .channel-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .header-search { max-width: 180px; }
+  .module-title span { display: none; }
+  .page-header h1 { font-size: 1.2rem; }
+  .kanban {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    grid-template-columns: none;
+  }
+  .kanban-col { flex: 0 0 min(240px, 78vw); }
+}
+
+@media (max-width: 820px) {
+  .app-header {
+    padding-left: max(12px, env(safe-area-inset-left)) !important;
+    padding-right: max(12px, env(safe-area-inset-right)) !important;
+  }
+  .main-content {
+    margin-left: 0 !important;
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+  .app-sidebar {
+    padding-top: env(safe-area-inset-top);
+    width: min(300px, 88vw);
+  }
+  .channel-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .channel-tile { min-height: 104px; padding: 12px; }
+  .desk-pay-banner-head { flex-direction: column; align-items: stretch; }
+  .desk-pay-chip { grid-template-columns: minmax(0, 1fr) auto; }
+  .desk-pay-chip .btn { grid-column: 1 / -1; width: 100%; }
+  .modal-scrim {
+    padding: 0;
+    align-items: stretch;
+    place-items: stretch;
+  }
+  .modal-shell,
+  .modal-shell.wide {
+    max-width: none;
+    width: 100%;
+    max-height: none;
+    height: 100dvh;
+    border-radius: 0;
+  }
+  .modal-body { padding: 14px; }
+  .stepper { gap: 6px; }
+  .step { font-size: 11px; }
+  .card-head { flex-wrap: wrap; }
+  .card-head .card-head-actions,
+  .page-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .page-actions .btn,
+  .card-head-actions .btn { flex: 1 1 auto; }
+  .compose { flex-direction: column; }
+  .compose .btn { width: 100%; }
+  .login-flow { display: none; }
+  .login-brand h1 { font-size: 1.5rem; }
+  .category-grid { grid-template-columns: 1fr 1fr; }
+  .sum-strip { grid-template-columns: 1fr; }
+  .header-right .alert-chip { max-width: 110px; overflow: hidden; }
+}
+
+@media (max-width: 560px) {
+  .channel-tiles,
+  .channel-tiles.compact,
+  .category-grid { grid-template-columns: 1fr; }
+  .channel-tile { min-height: 0; }
+  .desk-focus {
+    margin-inline: 0;
+    padding-inline: 4px;
+    scrollbar-width: none;
+  }
+  .desk-focus::-webkit-scrollbar { display: none; }
+  .desk-focus-btn { padding: 10px 12px; }
+  .desk-focus-btn span { display: none; }
+  .desk-focus-btn strong { font-size: 1rem; }
+  .kpi-strip { grid-template-columns: 1fr 1fr; gap: 0; }
+  .patient-grid,
+  .room-grid,
+  .insight-grid,
+  .finding-body { grid-template-columns: 1fr; }
+  .template-bar { grid-template-columns: 1fr; }
+  .header-right .alert-chip { display: none; }
+  .clinical-table,
+  .clinical-table.queue,
+  .clinical-table.desk-table { min-width: 680px; font-size: 12px; }
+  .clinical-table th,
+  .clinical-table td { padding-left: 8px; padding-right: 8px; }
+  .row-actions { gap: 4px; flex-wrap: wrap; }
+  .toast { max-width: none; }
+  .toast-wrap {
+    left: 12px;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .login-brand img { width: 140px; }
+  .otp-boxes { gap: 6px; flex-wrap: nowrap; }
+  .otp-boxes .inline-input { width: 40px !important; height: 44px; flex: 0 0 40px; }
+  .page-header { flex-direction: column; align-items: stretch; }
+  .defs > div { grid-template-columns: 1fr; gap: 3px; }
+}
+
+@media (max-width: 380px) {
+  .kpi-strip { grid-template-columns: 1fr; }
+  .page-header h1 { font-size: 1.1rem; }
+  .btn { padding: 0 10px; }
+}
+
+@media (max-width: 720px) {
+  .row-gap .btn { flex: 1 1 calc(50% - 4px); justify-content: center; }
+}
+
+/* Reception: patient lookup leads, with compact counter actions below. */
+.reception-workspace .desk-hub-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.reception-workspace .desk-hub-card.search { grid-column: 1 / -1; grid-row: 1; padding: 20px; border-left: 4px solid var(--blue); }
+.reception-workspace .desk-hub-card.search .search-box { width: 100%; min-height: 44px; }
+.reception-workspace .desk-hub-card:not(.search) { padding: 16px; border-radius: 8px; }
+.reception-workspace .desk-hub-card:focus-visible, .reception-workspace .desk-focus-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.reception-workspace .desk-focus-btn { min-width: 100px; }
+@media (max-width: 640px) {
+  .reception-workspace .desk-hub-grid { grid-template-columns: 1fr; }
+  .reception-workspace .desk-focus-btn span { display: block; }
+  .reception-workspace .desk-hub-card.search { padding: 16px; }
+}
+
+.reception-workspace .desk-hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.entry-steps { margin-bottom: 20px; padding: 0; list-style: none; flex-wrap: wrap; }
+.entry-patient-step { max-width: 820px; }
+.registration-inline { min-width: 0; }
+@media (max-width: 640px) { .reception-workspace .desk-hub-grid { grid-template-columns: 1fr; } }

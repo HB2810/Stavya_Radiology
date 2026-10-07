@@ -18,7 +18,7 @@ function Forgot({ back }) {
       ) : (<>
         {ch.devCode && <Notice>Demo mode: the code is <b>{ch.devCode}</b>.</Notice>}
         <label><span>6-digit code</span><input inputMode="numeric" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} autoFocus /></label>
-        <label><span>New password (10+ characters)</span><input type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="new-password" /></label>
+        <label><span>New password</span><input type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="new-password" /></label>
         <label><span>Repeat new password</span><input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} autoComplete="new-password" /></label>
         {pw2 && pw !== pw2 && <p className="note" style={{ color: 'var(--danger)' }}>Passwords do not match.</p>}
         <button className="btn btn-primary" disabled={a.busy || code.length !== 6 || !pw || pw !== pw2} onClick={reset}>Change password</button></>)}
@@ -31,6 +31,7 @@ export default function Login({ onLogin }) {
   const [forgot, setForgot] = useState(false);
   const [username, setU] = useState(''); const [password, setP] = useState(''); const a = useAction();
   const submit = (e) => { e.preventDefault(); a.run(async () => onLogin(await api.post('/auth/login', { username, password }))); };
+
   return (
     <div className="login-page">
       <div className="login-brand">
@@ -42,9 +43,9 @@ export default function Login({ onLogin }) {
       <div className="login-panel">
         {forgot ? <Forgot back={() => setForgot(false)} /> : <form className="login-card" onSubmit={submit}>
           <h2>Sign in</h2>
-          <p>Sign in with your employee code. Every action you take is recorded.</p>
+          <p>Enter your employee code and password.</p>
           <FormError error={a.error} />
-          <label><span>Employee code</span><input value={username} onChange={(e) => setU(e.target.value.toUpperCase())} placeholder="e.g. 277" inputMode="numeric" autoFocus autoComplete="username" autoCapitalize="characters" spellCheck={false} /></label>
+          <label><span>Employee code</span><input value={username} onChange={(e) => setU(e.target.value.toUpperCase())} placeholder="e.g. 301" inputMode="numeric" autoFocus autoComplete="username" autoCapitalize="characters" spellCheck={false} /></label>
           <label><span>Password</span><input type="password" value={password} onChange={(e) => setP(e.target.value)} autoComplete="current-password" /></label>
           <button className="btn btn-primary" disabled={a.busy || !username || !password}>{a.busy ? 'Signing in…' : 'Sign in'}</button>
           <button type="button" className="link-btn" onClick={() => setForgot(true)}>Forgot password?</button>

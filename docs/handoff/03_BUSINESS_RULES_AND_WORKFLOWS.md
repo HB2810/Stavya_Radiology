@@ -399,16 +399,13 @@ with no flags at all.
 | Exam flag | Input | Condition | Flag level | Text |
 |---|---|---|---|---|
 | `uses_contrast` | `contrastAllergy` | `YES` | `BLOCK` | Reported contrast allergy |
-| `uses_contrast` | `egfr` | missing (`null`) | `BLOCK` | eGFR required for contrast |
-| `uses_contrast` | `egfr` | `< 30` | `BLOCK` | eGFR … is below 30 |
-| `uses_contrast` | `egfr` | `30 ≤ egfr < 45` | `WARN` | eGFR … is below 45: hydrate, radiologist to confirm |
+| `uses_contrast` | `egfr` | missing (`null`) | `BLOCK` | eGFR required for contrast (document before IV contrast) |
 | `ionising` | `pregnant` | `YES` | `BLOCK` | Patient is pregnant and exam uses ionising radiation |
 | `mri` | `mriImplant` | `YES` or `UNKNOWN` | `BLOCK` | MRI implant/device reported *or* MRI implant status unknown |
 
-`egfr` itself must be a finite number `0–200` (`EGFR_INVALID`) when supplied at all.
+`egfr`, when supplied, must be a finite number **1–150** mL/min/1.73 m² (`EGFR_INVALID`) — JCI/NABH lab reporting range. There is **no** automatic BLOCK/WARN on the numeric eGFR value; clinical contrast decisions follow local ACR/NKF · ESUR · JCI/NABH protocol.
 
-- `status = 'BLOCKED'` if any flag is `BLOCK`-level, else `'CLEARED'`. A `WARN`-level flag (the eGFR 30–44 band)
-  never blocks on its own — it is informational only and still yields `CLEARED`.
+- `status = 'BLOCKED'` if any flag is `BLOCK`-level, else `'CLEARED'`.
 - **Override**: only possible when the check is blocked **and** `body.overrideReason` is supplied **and**
   `user.role === 'radiologist'` (`forbidden('Only a radiologist can override a safety block')` for anyone else,
   including the technologist who ran the check). A successful override sets `status = 'CLEARED_OVERRIDE'` and stores

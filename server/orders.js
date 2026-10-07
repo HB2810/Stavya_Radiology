@@ -6,6 +6,7 @@ import { config } from './config.js';
 import { getExam } from './catalog.js';
 import { notify, usersWithRoles } from './notifications.js';
 import { createPendingApproval, resolveDiscount, supersedePendingApprovals } from './discounts.js';
+import { applyTraffic, getChannel, resolveChannelForEncounter } from './traffic.js';
 
 export const PRIORITIES = ['ROUTINE', 'URGENT', 'STAT'];
 const PRIORITY_WEIGHT = { STAT: 3, URGENT: 2, ROUTINE: 1 };
@@ -153,24 +154,31 @@ export function createOrder(body, user, opts = {}) {
   // The sentence form (used in the radiology notification) only reads naturally for the ward/OPD clinician who
   // actually holds a clinical designation; reception and radiology staff keep their plain name there.
   const requesterLabel = WARD_ROLES.includes(user.role) && user.designation ? `${user.designation} ${user.fullName}` : user.fullName;
+  const channel = resolveChannelForEncounter(enc.type, body.channelCode || null);
+  const privileged = body.privileged === true || channel?.code === 'ER' || priority === 'STAT';
   const order = tx(db, () => {
     db.prepare(`INSERT INTO orders (id, accession, patient_id, encounter_id, source, exam_code, priority, clinical_indication, requested_by,
-      status, due_at, created_at, updated_at, registration_id, side, base_price, discount_pct, discount_amount, final_amount, no_charge, waiver_reason, external_order_id, discount_scheme_id)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+      status, due_at, created_at, updated_at, registration_id, side, base_price, discount_pct, discount_amount, final_amount, no_charge, waiver_reason, external_order_id, discount_scheme_id, channel_code, privileged)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
       .run(id, accession(), patient.id, enc.id, enc.type, exam.code, priority, indication, user.id, 'REQUESTED', due, t, t,
-        opts.registrationId || null, side, base, pct, discountAmount, base - discountAmount, body.noCharge ? 1 : 0, waiver, externalId, schemeId);
+        opts.registrationId || null, side, base, pct, discountAmount, base - discountAmount, body.noCharge ? 1 : 0, waiver, externalId, schemeId, channel?.code || null, privileged ? 1 : 0);
     logEvent({ id }, null, 'REQUESTED', user, `${enc.type} request${WARD_ROLES.includes(user.role) && user.designation ? ' · ' + user.designation : ''}`);
     if (requiresApproval) createPendingApproval({ orderId: id, registrationId: opts.registrationId || null, schemeId, pct, waiver }, user);
     const row = baseRow(id);
-    audit({ action: 'ORDER_CREATED', actor: user, patientId: patient.id, resource: row.accession, details: { exam: exam.code, priority, source: enc.type, requestedByDesignation: user.designation || null, discountPct: pct, scheme: schemeId, waiver, ...(externalId ? { externalOrderId: externalId } : {}) } });
+    audit({ action: 'ORDER_CREATED', actor: user, patientId: patient.id, resource: row.accession, details: { exam: exam.code, priority, source: enc.type, requestedByDesignation: user.designation || null, discountPct: pct, scheme: schemeId, waiver, channel: channel?.code || null, ...(externalId ? { externalOrderId: externalId } : {}) } });
     return row;
   });
+  // Optional token + auto ACK→SCHEDULED (respects admin traffic switches + channel.auto_queue).
+  if (channel && !opts.skipTraffic) {
+    try { applyTraffic(id, { channel, user, skipAuto: opts.skipAuto === true }); } catch (e) { console.warn('[traffic]', e.message); }
+  }
+  const fresh = withTiming(baseRow(id));
   notify(usersWithRoles(['radiologist', 'technologist', 'reception']), {
     orderId: id, kind: priority === 'STAT' ? 'STAT_ORDER' : 'NEW_ORDER',
     text: `${requesterLabel} requested ${priority} ${exam.name} for ${patient.name} (${enc.type}${enc.ward ? ' ' + enc.ward : ''})`
   });
   if (requiresApproval) notify(usersWithRoles(['admin']), { orderId: id, kind: 'DISCOUNT_APPROVAL', text: `Discount of ${pct}% on ${exam.name} for ${patient.name} needs approval${waiver ? ': ' + waiver : ''}` });
-  return { order: withTiming(order), duplicateOverridden: Boolean(duplicate) };
+  return { order: fresh, duplicateOverridden: Boolean(duplicate) };
 }
 
 export function transition(orderId, body, user) {
@@ -244,13 +252,15 @@ export function recordSafety(orderId, body, user) {
   const pregnant = yn(body.pregnant, 'pregnant'); const allergy = yn(body.contrastAllergy, 'contrastAllergy');
   const implant = oneOf(body.mriImplant, ['YES', 'NO', 'NA', 'UNKNOWN'], 'mriImplant');
   const egfr = body.egfr == null || body.egfr === '' ? null : Number(body.egfr);
-  if (egfr != null && (!Number.isFinite(egfr) || egfr < 0 || egfr > 200)) throw bad('EGFR_INVALID', 'eGFR must be between 0 and 200');
+  // Entry range: reportable eGFR (mL/min/1.73 m²) per CKD-EPI / KDIGO lab practice used under JCI & NABH contrast protocols.
+  if (egfr != null && (!Number.isFinite(egfr) || egfr < 1 || egfr > 150)) {
+    throw bad('EGFR_INVALID', 'eGFR must be between 1 and 150 mL/min/1.73 m² (JCI/NABH lab reporting range)');
+  }
   const flags = [];
   if (order.uses_contrast) {
     if (allergy === 'YES') flags.push({ level: 'BLOCK', text: 'Reported contrast allergy' });
-    if (egfr == null) flags.push({ level: 'BLOCK', text: 'eGFR required for contrast' });
-    else if (egfr < 30) flags.push({ level: 'BLOCK', text: `eGFR ${egfr} is below 30` });
-    else if (egfr < 45) flags.push({ level: 'WARN', text: `eGFR ${egfr} is below 45: hydrate, radiologist to confirm` });
+    if (egfr == null) flags.push({ level: 'BLOCK', text: 'eGFR required for contrast (document before IV contrast)' });
+    // No automatic BLOCK/WARN on eGFR value — radiologist applies ACR/NKF · ESUR · local JCI/NABH contrast protocol clinically.
   }
   if (order.ionising && pregnant === 'YES') flags.push({ level: 'BLOCK', text: 'Patient is pregnant and exam uses ionising radiation' });
   if (order.mri && (implant === 'YES' || implant === 'UNKNOWN')) flags.push({ level: 'BLOCK', text: implant === 'YES' ? 'MRI implant/device reported' : 'MRI implant status unknown' });

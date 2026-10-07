@@ -11,6 +11,7 @@ export class ApiError extends Error {
 // user-level resubmit (for example after "did that save?") safe too; use newKey() once per form and reuse it until the form succeeds.
 export const newKey = () => (crypto.randomUUID ? crypto.randomUUID() : `k-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 const NO_KEY = ['/auth/login', '/auth/logout', '/auth/forgot', '/auth/reset'];
+const MUTE_SYNC = ['/auth/login', '/auth/logout', '/auth/forgot', '/auth/reset'];
 
 async function send(method, path, body, headers) {
   const init = { method, headers, body: body ? JSON.stringify(body) : undefined };
@@ -29,6 +30,10 @@ async function request(method, path, body, raw = false, key) {
   if (raw && res.ok) return res.text();
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError(res.status, data);
+  // Tell other open role-tabs to refresh after a successful write.
+  if (post && res.ok && !MUTE_SYNC.some((p) => path.startsWith(p))) {
+    import('./sync.js').then((m) => m.notifyLocalChange()).catch(() => {});
+  }
   return data;
 }
 export const api = {

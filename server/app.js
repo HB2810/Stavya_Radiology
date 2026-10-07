@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { URL } from 'node:url';
 import { getSession, listStaffRoster, login, logout, requireRole } from './auth.js';
+import * as access from './access.js';
 import { HttpError, forbidden, likeEsc, requireObject } from './util.js';
 import { verifyAudit, listAudit, anchorAudit, listAnchors } from './audit.js';
 import { config } from './config.js';
@@ -26,6 +27,8 @@ import * as masters from './masters.js';
 import * as discounts from './discounts.js';
 import * as traffic from './traffic.js';
 import * as cases from './cases.js';
+import * as integrations from './integrations.js';
+import { syncStamp } from './sync.js';
 import { db } from './db.js';
 
 const WEB_DIR = config.webDir;
@@ -53,6 +56,7 @@ route('POST', '/api/auth/login', ({ body, ip }) => login(body.username, body.pas
 route('GET', '/api/auth/me', ({ user }) => ({ user }));
 route('POST', '/api/auth/logout', ({ user, token }) => (logout(token, user), { ok: true }));
 route('GET', '/api/health', () => ({ status: 'OK', audit: verifyAudit().valid }), { auth: false });
+route('GET', '/api/sync', () => syncStamp());
 
 route('GET', '/api/catalog/exams', () => listExams());
 route('GET', '/api/catalog/suggest', ({ query }) => suggestExams(query.indication));
@@ -62,6 +66,10 @@ route('GET', '/api/staff', () => patients.listStaff());
 // PKG-M6: admin-only read-only roster (Administration nav), no password data.
 route('GET', '/api/staff/roster', ({ user }) => listStaffRoster(user));
 route('GET', '/api/clinicians', () => patients.listClinicians());
+// Admin-only: which modules each role / user may see (hidden when denied — never shown as blocked).
+route('GET', '/api/access', ({ user }) => access.getAccessMatrix(user));
+route('POST', '/api/access/roles/:role', ({ user, params, body }) => access.setRoleModules(params.role, body.modules, user));
+route('POST', '/api/access/users/:id', ({ user, params, body }) => access.setUserModules(params.id, body.overrides, user));
 
 // ---- Channel / machine / queue masters (Stavya traffic framework) ----
 route('GET', '/api/masters/channels', ({ query }) => traffic.listChannels({ activeOnly: query.all !== '1' }));
@@ -70,6 +78,12 @@ route('GET', '/api/masters/machines', ({ query }) => traffic.listMachines({ acti
 route('POST', '/api/masters/machines/:id', ({ user, params, body }) => traffic.updateMachine(params.id, body, user));
 route('GET', '/api/masters/queue-rules', () => traffic.getQueueRules());
 route('POST', '/api/masters/queue-rules', ({ user, body }) => traffic.updateQueueRules(body, user));
+route('GET', '/api/masters/traffic-options', () => traffic.getTrafficOptions());
+route('POST', '/api/masters/traffic-options', ({ user, body }) => traffic.updateTrafficOptions(body, user));
+route('GET', '/api/integrations', ({ user }) => integrations.listIntegrations(user));
+route('POST', '/api/integrations/:key', ({ user, params, body }) => integrations.updateIntegration(params.key, body, user));
+route('GET', '/api/integrations/outbox', ({ user, query }) => integrations.listOutbox(user, query));
+route('POST', '/api/integrations/pacs/study-complete', ({ user, body }) => integrations.onPacsStudyComplete(body, user));
 route('GET', '/api/reception/board', ({ user, query }) => traffic.receptionBoard(user, query));
 route('POST', '/api/orders/:id/payment', ({ user, params, body }) => traffic.markOrderPayment(params.id, body, user));
 route('POST', '/api/orders/:id/hold', ({ user, params, body }) => traffic.holdOrder(params.id, body, user));
@@ -83,6 +97,8 @@ route('POST', '/api/cases', ({ user, body }) => cases.createCase(body, user));
 route('GET', '/api/cases/:id', ({ user, params }) => cases.getCase(params.id, user));
 route('GET', '/api/cases/modalities/:modality/services', ({ params }) => cases.servicesForModality(params.modality));
 route('POST', '/api/case-modalities/:id/protocol', ({ user, params, body }) => cases.protocolModality(params.id, body, user));
+route('POST', '/api/case-modalities/:id/call', ({ user, params }) => cases.callForAssist(params.id, user));
+route('POST', '/api/case-modalities/:id/assist-transfer', ({ user, params, body }) => cases.assistTransfer(params.id, body, user));
 route('POST', '/api/case-modalities/:id/cancel', ({ user, params, body }) => cases.cancelCaseModality(params.id, body, user));
 
 route('GET', '/api/patients', ({ user, query }) => patients.searchPatients(query.q, user));

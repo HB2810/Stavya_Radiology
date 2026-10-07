@@ -14,7 +14,7 @@ export default function Summary({ id }) {
     <>
       <BackLink to={`/patient/${s.patient.id}`}>Patient chart</BackLink>
       <PageHeader title="Visit summary" subtitle={`${s.patient.name} · ${s.encounter.ref_no}. Tick the sections to include, then print or save as PDF.`} actions={<button className="btn btn-primary" onClick={print}>Download PDF</button>} />
-      <div className="grid-2" style={{ gridTemplateColumns: '260px minmax(0,1fr)' }}>
+      <div className="grid-2 summary-layout">
         <Card title="Include in PDF" icon="report">{MODULES.map(([k, l]) => <label className="check-row" key={k}><input type="checkbox" checked={inc[k]} onChange={(e) => setInc({ ...inc, [k]: e.target.checked })} /><span>{l}</span></label>)}</Card>
         <div>
           <Card title="Patient information" icon="patients"><dl className="defs"><div><dt>Patient</dt><dd>{s.patient.name} · {s.patient.mrn}</dd></div><div><dt>Born</dt><dd>{s.patient.dob} · {s.patient.sex}</dd></div><div><dt>Visit</dt><dd>{s.encounter.ref_no} ({ENCOUNTER_LABEL[s.encounter.type] || s.encounter.type})</dd></div><div><dt>Allergy</dt><dd className={s.patient.allergy !== 'None recorded' ? 'allergy-text' : ''}>{s.patient.allergy}</dd></div></dl></Card>

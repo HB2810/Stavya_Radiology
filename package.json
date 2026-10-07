@@ -6,7 +6,8 @@
   "private": true,
   "engines": { "node": ">=22.5" },
   "scripts": {
-    "start": "node server/index.js",
+    "start": "node -e \"const M=+process.versions.node.split('.')[0]; if(M<22){console.error('Need Node >=22.5 for node:sqlite. Run: ./start.sh  (brew install node@24)'); process.exit(1)}\" && node server/index.js",
+    "start:safe": "./start.sh",
     "seed": "node server/seed.js",
     "test": "node --test --no-warnings test/*.test.js"
   }

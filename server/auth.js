@@ -4,10 +4,13 @@ import { audit } from './audit.js';
 import { HttpError, bad, forbidden, now, tx, uid } from './util.js';
 import { config } from './config.js';
 import { normalisePhone, otpConfig, sendOtp, verifyOtp } from './otp.js';
+import { enrichUser } from './modules.js';
 
-export const ROLES = ['radiologist', 'technologist', 'reception', 'clinician', 'nurse', 'admin', 'auditor'];
-export const RADIOLOGY_STAFF = ['radiologist', 'technologist', 'reception'];
+export const ROLES = ['radiologist', 'technologist', 'assistant', 'reception', 'clinician', 'nurse', 'admin', 'auditor'];
+export const RADIOLOGY_STAFF = ['radiologist', 'technologist', 'assistant', 'reception'];
 export const WARD_ROLES = ['clinician', 'nurse'];
+/** Assistant collects consent / basics; technologist runs modality + sub-services. */
+export const TECH_LANE = ['technologist', 'assistant', 'radiologist'];
 
 export function hashPassword(password, salt = randomBytes(16).toString('hex')) {
   return { salt, hash: pbkdf2Sync(password, salt, 100000, 64, 'sha256').toString('hex') };
@@ -47,9 +50,10 @@ export function login(username, password, ip = '') {
   }
   attempts.delete(username);
   const token = 'ris_' + randomBytes(32).toString('hex');
-  const user = { id: row.id, username: row.username, fullName: row.full_name, role: row.role, ward: row.ward, designation: row.designation, employeeCode: row.username };
-  sessions.set(token, { user, expires: Date.now() + config.sessionHours * 3600_000 });
-  audit({ action: 'LOGIN', actor: user, details: { ip } });
+  const base = { id: row.id, username: row.username, fullName: row.full_name, role: row.role, ward: row.ward, designation: row.designation, employeeCode: row.username };
+  const user = enrichUser(base);
+  sessions.set(token, { user: base, expires: Date.now() + config.sessionHours * 3600_000 });
+  audit({ action: 'LOGIN', actor: base, details: { ip } });
   return { token, user };
 }
 
@@ -57,7 +61,8 @@ export function getSession(token) {
   const s = token && sessions.get(token);
   if (!s) return null;
   if (s.expires < Date.now()) { sessions.delete(token); return null; }
-  return s.user;
+  // Re-resolve modules each request so admin permission changes apply without re-login.
+  return enrichUser(s.user);
 }
 export function logout(token, user) {
   sessions.delete(token);

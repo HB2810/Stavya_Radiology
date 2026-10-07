@@ -2,6 +2,7 @@ import { createServer } from './app.js';
 import { seedCatalog } from './catalog.js';
 import { config, validateConfig } from './config.js';
 import { db, migration } from './db.js';
+import { ensureRosterUsers } from './ensure-roster.js';
 
 const { errors, warnings } = validateConfig();
 for (const w of warnings) console.warn(`[config] warning: ${w}`);
@@ -12,6 +13,11 @@ if (errors.length) {
 }
 
 seedCatalog();
+const demoPw = process.env.RIS_DEMO_PASSWORD || '1234';
+const roster = ensureRosterUsers(demoPw);
+if (roster.created.length) console.log(`[roster] added demo users: ${roster.created.join(', ')}`);
+if (roster.reset) console.log(`[roster] temporary password set for ${roster.reset} active users`);
+
 const server = createServer();
 server.listen(config.port, config.host, () => console.log(`Stavya RIS listening on http://${config.host}:${config.port} (schema v${migration.to})`));
 

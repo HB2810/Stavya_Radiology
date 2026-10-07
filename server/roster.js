@@ -14,6 +14,9 @@ export const STAFF = {
   tech_bijo:      { code: '105', name: 'Bijo Rajan', role: 'technologist', designation: 'Radiology Technologist' },
   tech_tirth:     { code: '106', name: 'Tirth Sureshbhai Patel', role: 'technologist', designation: 'Radiology Technologist' },
   tech_yashkumar: { code: '107', name: 'Yashkumar Mangalbhai Parmar', role: 'technologist', designation: 'Radiology Technologist' },
+  // Assistant lane: after reception token, before technician selects sub-modalities at the machine.
+  assist_1:       { code: '108', name: 'Radiology Assistant 1', role: 'assistant', designation: 'Radiology Assistant', base: true },
+  assist_2:       { code: '109', name: 'Radiology Assistant 2', role: 'assistant', designation: 'Radiology Assistant', base: true },
   dr_mirant:      { code: '201', name: 'Dr. Mirant Bharat Dave', role: 'clinician', designation: 'Consultant Spine Surgeon', base: true },
   dr_bharat:      { code: '202', name: 'Dr. Bharat R. Dave', role: 'clinician', designation: 'Consultant Spine Surgeon', base: true },
   dr_ajay:        { code: '203', name: 'Dr. Ajay Krishnan', role: 'clinician', designation: 'Consultant Spine Surgeon' },

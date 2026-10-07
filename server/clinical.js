@@ -143,7 +143,10 @@ export function saveScanConsent(orderId, body, user) {
   if (contrast === 'CONTRAST' && ['MRI', 'OPEN_MRI'].includes(o.modality)) {
     const ml = Number(body.mlContrast); const egfr = Number(body.egfr); const cr = Number(body.serumCreatinine);
     if (!(ml > 0 && ml <= 100)) throw bad('CONTRAST_ML_INVALID', 'Enter the contrast volume in ml');
-    if (!(egfr > 0 && egfr <= 200)) throw bad('EGFR_INVALID', 'Enter the eGFR');
+    // JCI/NABH-aligned reportable eGFR range (mL/min/1.73 m²); no auto clinical flag on the value.
+    if (!Number.isFinite(egfr) || egfr < 1 || egfr > 150) {
+      throw bad('EGFR_INVALID', 'eGFR must be between 1 and 150 mL/min/1.73 m² (JCI/NABH lab reporting range)');
+    }
     if (!(cr > 0 && cr <= 20)) throw bad('CREATININE_INVALID', 'Enter the serum creatinine');
     data.mri = { mlContrast: ml, egfr, serumCreatinine: cr, notes: note(body.contrastNotes) };
   }
@@ -158,9 +161,18 @@ export function saveScanConsent(orderId, body, user) {
   // The consent and the move to PREPARED commit together: a consent is never recorded with the study left in the wrong state.
   tx(db, () => {
     db.prepare('INSERT INTO scan_consents (id, order_id, data_json, full_name, signed_date, language, actor_id, actor_name, created_at) VALUES (?,?,?,?,?,?,?,?,?)').run(uid('scn'), orderId, JSON.stringify(data), fullName, signedDate, language, user.id, user.fullName, now());
+    if (data.sedation) db.prepare('UPDATE orders SET needs_sedation = 1, updated_at = ? WHERE id = ?').run(now(), orderId);
     audit({ action: 'SCAN_CONSENT_SAVED', actor: user, patientId: o.patient_id, resource: o.accession, details: { contrast, sedation: Boolean(data.sedation), language } });
     if (o.status === 'ARRIVED') { transition(orderId, { to: 'PREPARED', note: 'Patient consent recorded' }, user); prepared = true; }
   });
+  if (data.sedation) {
+    const patient = db.prepare('SELECT * FROM patients WHERE id = ?').get(o.patient_id);
+    import('./integrations.js').then((m) => m.onSedationRequired(o, patient, {
+      medicineUsed: data.sedation.medicineUsed,
+      notes: data.sedation.notes,
+      actor: user
+    })).catch(() => {});
+  }
   return { consent: getScanConsent(orderId, user), prepared };
 }
 export function getScanConsent(orderId, user) {

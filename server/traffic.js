@@ -23,8 +23,71 @@ export function listMachines({ activeOnly = true, modality } = {}) {
 }
 export function getQueueRules() {
   const row = db.prepare('SELECT * FROM queue_rules WHERE id = ?').get('qr_default');
-  if (!row) return { priorityOrder: [], noShowMinutes: 30, holdReasons: [] };
-  return { ...row, priorityOrder: JSON.parse(row.priority_order_json), holdReasons: JSON.parse(row.hold_reasons_json) };
+  if (!row) {
+    return {
+      priorityOrder: [], noShowMinutes: 30, holdReasons: [],
+      tokenEnabled: true, autoTrafficEnabled: true, reservedEmergencySlots: 8
+    };
+  }
+  return {
+    ...row,
+    priorityOrder: JSON.parse(row.priority_order_json),
+    holdReasons: JSON.parse(row.hold_reasons_json),
+    tokenEnabled: row.token_enabled !== 0,
+    autoTrafficEnabled: row.auto_traffic_enabled !== 0,
+    reservedEmergencySlots: row.reserved_emergency_slots == null ? 8 : Number(row.reserved_emergency_slots)
+  };
+}
+
+/** Optional module switches — token minting and auto ACK→SCHEDULED traffic. */
+export function getTrafficOptions() {
+  const rules = getQueueRules();
+  return {
+    tokenEnabled: !!rules.tokenEnabled,
+    autoTrafficEnabled: !!rules.autoTrafficEnabled,
+    trafficSystemEnabled: !!(rules.tokenEnabled || rules.autoTrafficEnabled),
+    reservedEmergencySlots: rules.reservedEmergencySlots ?? 8
+  };
+}
+
+export function isTokenEnabled() {
+  return getTrafficOptions().tokenEnabled;
+}
+
+export function isAutoTrafficEnabled() {
+  return getTrafficOptions().autoTrafficEnabled;
+}
+
+/** ER / STAT / privileged patients may use the reserved emergency capacity. */
+export function usesReservedLane({ channelCode, priority, privileged } = {}) {
+  if (privileged) return true;
+  if (priority === 'STAT') return true;
+  if (channelCode === 'ER') return true;
+  return false;
+}
+
+export function updateTrafficOptions(body, user) {
+  requireRole(user, ['admin']);
+  const cur = getTrafficOptions();
+  const tokenEnabled = body.tokenEnabled == null ? cur.tokenEnabled : !!body.tokenEnabled;
+  const autoTrafficEnabled = body.autoTrafficEnabled == null ? cur.autoTrafficEnabled : !!body.autoTrafficEnabled;
+  let tok = tokenEnabled;
+  let auto = autoTrafficEnabled;
+  if (body.trafficSystemEnabled != null) {
+    tok = !!body.trafficSystemEnabled;
+    auto = !!body.trafficSystemEnabled;
+  }
+  let reserved = cur.reservedEmergencySlots ?? 8;
+  if (body.reservedEmergencySlots != null) {
+    reserved = Number(body.reservedEmergencySlots);
+    if (!Number.isInteger(reserved) || reserved < 5 || reserved > 10) {
+      throw bad('FIELD_INVALID', 'Reserved emergency / privileged slots must be between 5 and 10');
+    }
+  }
+  db.prepare('UPDATE queue_rules SET token_enabled = ?, auto_traffic_enabled = ?, reserved_emergency_slots = ?, updated_at = ? WHERE id = ?')
+    .run(tok ? 1 : 0, auto ? 1 : 0, reserved, now(), 'qr_default');
+  audit({ action: 'TRAFFIC_OPTIONS_UPDATED', actor: user, resource: 'qr_default', details: { tokenEnabled: tok, autoTrafficEnabled: auto, reservedEmergencySlots: reserved } });
+  return getTrafficOptions();
 }
 
 export function updateChannel(code, body, user) {
@@ -32,7 +95,7 @@ export function updateChannel(code, body, user) {
   const ch = getChannel(code);
   if (!ch) throw bad('UNKNOWN_CHANNEL', 'Unknown channel');
   const name = body.name != null ? requireText(body.name, 'Name', 80) : ch.name;
-  const paymentPlace = body.paymentPlace != null ? oneOf(body.paymentPlace, ['OPD', 'RADIOLOGY', 'IPD_CREDIT', 'NONE'], 'paymentPlace') : ch.payment_place;
+  const paymentPlace = body.paymentPlace != null ? oneOf(body.paymentPlace, ['RADIOLOGY', 'IPD_CREDIT', 'NONE'], 'paymentPlace') : ch.payment_place;
   const reportHandover = body.reportHandover != null ? oneOf(body.reportHandover, ['CONSULTANT', 'PATIENT', 'WARD'], 'reportHandover') : ch.report_handover;
   const defaultPriority = body.defaultPriority != null ? oneOf(body.defaultPriority, ['ROUTINE', 'URGENT', 'STAT'], 'defaultPriority') : ch.default_priority;
   const paymentGate = body.paymentGate == null ? ch.payment_gate : (body.paymentGate ? 1 : 0);
@@ -73,6 +136,10 @@ export function updateQueueRules(body, user) {
   const holdReasons = Array.isArray(body.holdReasons) ? body.holdReasons.map(String) : cur.holdReasons;
   db.prepare('UPDATE queue_rules SET priority_order_json=?, no_show_minutes=?, hold_reasons_json=?, updated_at=? WHERE id=?')
     .run(JSON.stringify(priorityOrder), noShowMinutes, JSON.stringify(holdReasons), now(), 'qr_default');
+  // Optional traffic switches may be updated from the same admin form.
+  if (body.tokenEnabled != null || body.autoTrafficEnabled != null || body.trafficSystemEnabled != null) {
+    updateTrafficOptions(body, user);
+  }
   audit({ action: 'QUEUE_RULES_UPDATED', actor: user, resource: 'qr_default' });
   return getQueueRules();
 }
@@ -103,10 +170,11 @@ export function nextToken(machine, channel) {
   return { token: `${prefix}-${String(n).padStart(3, '0')}`, key };
 }
 
-/** ETA = now + (people ahead on this machine × their est_minutes), priority-aware. */
-export function estimateEta(machineId, examMinutes, channelCode) {
+/** ETA = now + (people ahead on this machine × their est_minutes), priority-aware.
+ *  Routine traffic always carries reservedEmergencySlots of phantom wait so ER/privileged can jump in. */
+export function estimateEta(machineId, examMinutes, channelCode, { privileged = false, priority = 'ROUTINE' } = {}) {
   const rules = getQueueRules();
-  const ahead = db.prepare(`SELECT o.id, o.channel_code, o.priority, x.est_minutes
+  const ahead = db.prepare(`SELECT o.id, o.channel_code, o.priority, o.privileged, x.est_minutes
     FROM orders o JOIN exam_catalog x ON x.code = o.exam_code
     WHERE o.machine_id = ? AND o.status IN ('REQUESTED','ACKNOWLEDGED','SCHEDULED','ARRIVED','PREPARED','IN_PROGRESS')
     ORDER BY o.created_at`).all(machineId);
@@ -117,19 +185,20 @@ export function estimateEta(machineId, examMinutes, channelCode) {
     if (rank(o.channel_code) < myRank) wait += o.est_minutes || 15;
     else if (rank(o.channel_code) === myRank && o.priority === 'STAT') wait += o.est_minutes || 15;
   }
-  // Also count in-progress remaining as half of est for a soft estimate.
   wait += Math.round((examMinutes || 15) / 2);
+  // Hold 5–10 slots for emergency / privileged patients (not consumed by routine walk-ins).
+  const reserved = rules.reservedEmergencySlots ?? 8;
+  if (!usesReservedLane({ channelCode, priority, privileged })) {
+    wait += reserved * 12; // ~12 min per held slot as soft capacity buffer
+  }
   return new Date(nowMs() + wait * 60_000).toISOString();
 }
 
-export function paymentStatusForChannel(channel, { paidAtOpd = false, paymentRef = null } = {}) {
+export function paymentStatusForChannel(channel, { paymentRef = null } = {}) {
   if (channel.payment_place === 'NONE') return { paymentStatus: 'NOT_REQUIRED', paymentRef: null };
   if (channel.payment_place === 'IPD_CREDIT') return { paymentStatus: 'IPD_CREDIT', paymentRef: null };
-  if (channel.payment_place === 'OPD') {
-    return { paymentStatus: paidAtOpd || paymentRef ? 'PAID_OPD' : 'UNPAID', paymentRef: paymentRef || null };
-  }
-  // RADIOLOGY
-  return { paymentStatus: 'UNPAID', paymentRef: null };
+  // RADIOLOGY (and any legacy OPD place): collect at radiology counter — no “paid at OPD” path.
+  return { paymentStatus: 'UNPAID', paymentRef: paymentRef || null };
 }
 
 export function isPaymentCleared(order) {
@@ -144,8 +213,8 @@ export function assertPaymentForScan(order) {
 }
 
 /**
- * After an order row exists in REQUESTED, assign machine + token and optionally auto-advance
- * to SCHEDULED. Called inside or just after createOrder's transaction.
+ * After an order row exists in REQUESTED, assign machine (+ optional token/ETA) and optionally
+ * auto-advance to SCHEDULED. Token / auto-traffic are system-optional (see getTrafficOptions).
  */
 export function applyTraffic(orderId, { channel, user, skipAuto = false } = {}) {
   const order = db.prepare(`SELECT o.*, x.modality, x.est_minutes FROM orders o JOIN exam_catalog x ON x.code = o.exam_code WHERE o.id = ?`).get(orderId);
@@ -153,35 +222,43 @@ export function applyTraffic(orderId, { channel, user, skipAuto = false } = {}) 
   const ch = channel || (order.channel_code ? getChannel(order.channel_code) : null);
   if (!ch) return null;
 
+  const opts = getTrafficOptions();
   const machine = order.machine_id ? db.prepare('SELECT * FROM machines WHERE id = ?').get(order.machine_id) : pickMachine(order.modality);
-  const { token } = nextToken(machine, ch);
-  const eta = machine ? estimateEta(machine.id, order.est_minutes, ch.code) : new Date(nowMs() + (order.est_minutes || 15) * 60_000).toISOString();
+  const token = opts.tokenEnabled ? nextToken(machine, ch).token : null;
+  const eta = opts.autoTrafficEnabled || opts.tokenEnabled
+    ? (machine ? estimateEta(machine.id, order.est_minutes, ch.code, { privileged: !!order.privileged, priority: order.priority }) : new Date(nowMs() + (order.est_minutes || 15) * 60_000).toISOString())
+    : null;
 
-  db.prepare(`UPDATE orders SET machine_id = COALESCE(?, machine_id), token_no = ?, eta_at = ?, channel_code = COALESCE(channel_code, ?),
+  db.prepare(`UPDATE orders SET machine_id = COALESCE(?, machine_id), token_no = COALESCE(?, token_no), eta_at = COALESCE(?, eta_at), channel_code = COALESCE(channel_code, ?),
     payment_place = COALESCE(payment_place, ?), report_handover = COALESCE(report_handover, ?), updated_at = ? WHERE id = ?`)
     .run(machine?.id || null, token, eta, ch.code, ch.payment_place, ch.report_handover, now(), orderId);
 
-  if (!skipAuto && ch.auto_queue && order.status === 'REQUESTED') {
+  const mayAuto = opts.autoTrafficEnabled && ch.auto_queue && !skipAuto && order.status === 'REQUESTED';
+  if (mayAuto) {
     // Auto ACK + SCHEDULE without going through transition() permission groups — recorded as system traffic.
     const t = now();
+    const scheduledAt = eta || t;
     db.prepare(`UPDATE orders SET status = 'SCHEDULED', scheduled_at = ?, revision = revision + 1, updated_at = ? WHERE id = ?`)
-      .run(eta, t, orderId);
+      .run(scheduledAt, t, orderId);
     db.prepare('INSERT INTO order_events (id, order_id, from_status, to_status, actor_id, actor_name, note, at) VALUES (?,?,?,?,?,?,?,?)')
       .run(uid('evt'), orderId, 'REQUESTED', 'ACKNOWLEDGED', user.id, user.fullName, `Auto queue · channel ${ch.code}`, t);
+    const note = token
+      ? `Token ${token} · ETA ${new Date(scheduledAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`
+      : `Auto queued · channel ${ch.code}`;
     db.prepare('INSERT INTO order_events (id, order_id, from_status, to_status, actor_id, actor_name, note, at) VALUES (?,?,?,?,?,?,?,?)')
-      .run(uid('evt'), orderId, 'ACKNOWLEDGED', 'SCHEDULED', user.id, user.fullName, `Token ${token} · ETA ${new Date(eta).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`, t);
-    audit({ action: 'ORDER_AUTO_QUEUED', actor: user, patientId: order.patient_id, resource: order.accession, details: { token, machine: machine?.code, channel: ch.code, eta } });
+      .run(uid('evt'), orderId, 'ACKNOWLEDGED', 'SCHEDULED', user.id, user.fullName, note, t);
+    audit({ action: 'ORDER_AUTO_QUEUED', actor: user, patientId: order.patient_id, resource: order.accession, details: { token, machine: machine?.code, channel: ch.code, eta: scheduledAt } });
   }
-  return { token, eta, machineId: machine?.id || null };
+  return { token, eta, machineId: machine?.id || null, tokenEnabled: opts.tokenEnabled, autoTrafficEnabled: opts.autoTrafficEnabled };
 }
 
 export function markOrderPayment(orderId, body, user) {
   requireRole(user, ['reception', 'admin']);
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
   if (!order) throw bad('NOT_FOUND', 'Order not found');
-  const status = oneOf(body.paymentStatus, PAYMENT_STATUSES, 'paymentStatus');
+  const status = oneOf(body.paymentStatus, ['UNPAID', 'PAID_RADIOLOGY', 'IPD_CREDIT', 'WAIVED', 'NOT_REQUIRED'], 'paymentStatus');
   const ref = optionalText(body.paymentRef, 80) || null;
-  if (status === 'PAID_OPD' && !ref) throw bad('RECEIPT_REQUIRED', 'Enter the OPD receipt / bill reference');
+  if (status === 'PAID_RADIOLOGY' && !ref) throw bad('RECEIPT_REQUIRED', 'Enter the payment reference');
   tx(db, () => {
     db.prepare('UPDATE orders SET payment_status = ?, payment_ref = ?, revision = revision + 1, updated_at = ? WHERE id = ?')
       .run(status, ref, now(), orderId);
@@ -255,7 +332,7 @@ export function receptionBoard(user, q = {}) {
     SELECT o.id, o.accession, o.status, o.priority, o.token_no, o.eta_at, o.scheduled_at, o.channel_code, o.payment_status, o.payment_place, o.payment_ref,
       o.report_handover, o.hold_reason, o.revision, o.created_at, o.updated_at, o.patient_id, o.exam_code, o.registration_id,
       o.base_price, o.discount_pct, o.discount_amount, o.final_amount, o.no_charge, o.side,
-      p.name patient_name, p.mrn, p.dob, p.sex, p.allergy, p.phone, x.name exam_name, x.modality,
+      p.name patient_name, p.mrn, p.opd_id, p.ipd_id, p.dob, p.sex, p.allergy, p.phone, x.name exam_name, x.modality,
       e.type encounter_type, e.ward, e.bed, e.room, e.ref_no encounter_ref, e.doctor_id,
       du.full_name consultant_name, ch.name channel_name, m.code machine_code, m.name machine_name,
       rg.reg_no registration_no

@@ -26,19 +26,26 @@ const aadhaarHash = (n) => createHash('sha256').update(`ris-aadhaar:${n}`).diges
 export const capabilities = () => ({ otpDelivery: deliveryConfigured(), otpRequiredForNewPatients: requireOtp(), aadhaarLookup: true, aadhaarOtpVerification: false,
   note: 'Aadhaar OTP verification needs a licensed UIDAI provider and is not configured; Aadhaar can be used to find an existing patient.' });
 
-const mask = (p) => ({ id: p.id, mrn: p.mrn, name: p.name, dob: p.dob, sex: p.sex, phone: p.phone ? `${p.phone.slice(0, 2)}******${p.phone.slice(-2)}` : '', email: p.email || '', allergy: p.allergy });
+const mask = (p) => ({
+  id: p.id, mrn: p.mrn, opd_id: p.opd_id || null, ipd_id: p.ipd_id || null,
+  name: p.name, dob: p.dob, sex: p.sex,
+  phone: p.phone ? `${p.phone.slice(0, 2)}******${p.phone.slice(-2)}` : '', email: p.email || '', allergy: p.allergy
+});
 
 export function lookupPatients(body, user) {
   requireRole(user, [...STAFF, 'radiologist', 'technologist']);
   let rows = [];
   if (body.phone) rows = db.prepare('SELECT * FROM patients WHERE phone = ?').all(normalisePhone(body.phone));
   else if (body.email) rows = db.prepare('SELECT * FROM patients WHERE lower(email) = ?').all(normaliseEmail(body.email));
-  else if (body.uhid) rows = db.prepare('SELECT * FROM patients WHERE mrn = ?').all(requireText(body.uhid, 'UHID', 40));
+  else if (body.opdId) rows = db.prepare('SELECT * FROM patients WHERE opd_id = ?').all(requireText(body.opdId, 'OPD ID', 40));
+  else if (body.ipdId) rows = db.prepare('SELECT * FROM patients WHERE ipd_id = ?').all(requireText(body.ipdId, 'IPD ID', 40));
+  else if (body.uhid || body.mrn) rows = db.prepare('SELECT * FROM patients WHERE mrn = ? OR opd_id = ? OR ipd_id = ?')
+    .all(requireText(body.uhid || body.mrn, 'Patient ID', 40), String(body.uhid || body.mrn).trim(), String(body.uhid || body.mrn).trim());
   else if (body.aadhaar) {
     const n = String(body.aadhaar).replace(/\s/g, '');
     if (!validAadhaar(n)) throw bad('AADHAAR_INVALID', 'That is not a valid Aadhaar number');
     rows = db.prepare('SELECT * FROM patients WHERE aadhaar_hash = ?').all(aadhaarHash(n));
-  } else throw bad('LOOKUP_KEY_REQUIRED', 'Give a phone, email, UHID or Aadhaar number');
+  } else throw bad('LOOKUP_KEY_REQUIRED', 'Give a phone, email, OPD ID, IPD ID or Aadhaar number');
   audit({ action: 'PATIENT_LOOKUP', actor: user, details: { found: rows.length, by: Object.keys(body).find((k) => body[k]) } });
   return rows.map(mask);
 }
@@ -77,24 +84,34 @@ export function savePatient(body, user) {
   const name = [first, middle, last].filter(Boolean).join(' ');
   const cols = { first_name: first, middle_name: middle || null, last_name: last, name, dob, sex, phone, email, address, country: optionalText(body.country, 60) || 'India', state: optionalText(body.state, 60) || null,
     city: optionalText(body.city, 60) || null, zipcode: zip || null, occupation, designation: optionalText(body.designation, 60) || null, reference: optionalText(body.reference, 100) || null, allergy: optionalText(body.allergy, 200) || 'None recorded' };
+  const opdId = optionalText(body.opdId, 40) || null;
+  const ipdId = optionalText(body.ipdId, 40) || null;
   let id = body.patientId || null; let created = false; let verifiedPhone; let verifiedEmail;
   tx(db, () => {
     // Consuming the one-time code is part of the same transaction: if saving fails, the code is not used up.
     verifiedPhone = body.verificationId && consumeVerified({ challengeId: body.verificationId, purpose: 'REGISTER', channel: 'phone', target: phone });
     verifiedEmail = body.verificationId && email && !verifiedPhone && consumeVerified({ challengeId: body.verificationId, purpose: 'REGISTER', channel: 'email', target: email });
+    if (opdId) {
+      const clash = db.prepare('SELECT id FROM patients WHERE opd_id = ? AND id != ?').get(opdId, id || '');
+      if (clash) throw conflict('OPD_ID_EXISTS', 'Another patient already has this OPD ID');
+    }
+    if (ipdId) {
+      const clash = db.prepare('SELECT id FROM patients WHERE ipd_id = ? AND id != ?').get(ipdId, id || '');
+      if (clash) throw conflict('IPD_ID_EXISTS', 'Another patient already has this IPD ID');
+    }
     if (id) {
       if (!db.prepare('SELECT 1 FROM patients WHERE id = ?').get(id)) throw notFound('Patient');
       const sets = Object.keys(cols).map((k) => `${k} = ?`).join(', ');
-      db.prepare(`UPDATE patients SET ${sets}${aHash ? ', aadhaar_hash = ?, aadhaar_last4 = ?' : ''}${verifiedPhone ? ', phone_verified = 1' : ''}${verifiedEmail ? ', email_verified = 1' : ''} WHERE id = ?`)
-        .run(...Object.values(cols), ...(aHash ? [aHash, aLast] : []), id);
+      db.prepare(`UPDATE patients SET ${sets}, opd_id = ?, ipd_id = ?${aHash ? ', aadhaar_hash = ?, aadhaar_last4 = ?' : ''}${verifiedPhone ? ', phone_verified = 1' : ''}${verifiedEmail ? ', email_verified = 1' : ''} WHERE id = ?`)
+        .run(...Object.values(cols), opdId, ipdId, ...(aHash ? [aHash, aLast] : []), id);
     } else {
       if (requireOtp() && !verifiedPhone && !verifiedEmail) throw bad('VERIFICATION_REQUIRED', 'Verify the patient\'s phone or email with a one-time code before registering a new patient');
       id = uid('pat'); created = true;
-      let n = db.prepare('SELECT COUNT(*) c FROM patients').get().c + 1001; let mrn = `SSH-${n}`;
-      while (db.prepare('SELECT 1 FROM patients WHERE mrn = ?').get(mrn)) mrn = `SSH-${++n}`;
+      let n = db.prepare('SELECT COUNT(*) c FROM patients').get().c + 1001; let mrn = `RAD-${n}`;
+      while (db.prepare('SELECT 1 FROM patients WHERE mrn = ?').get(mrn)) mrn = `RAD-${++n}`;
       const names = Object.keys(cols);
-      db.prepare(`INSERT INTO patients (id, mrn, ${names.join(', ')}, aadhaar_hash, aadhaar_last4, phone_verified, email_verified, created_at) VALUES (?,?,${names.map(() => '?').join(',')},?,?,?,?,?)`)
-        .run(id, mrn, ...Object.values(cols), aHash, aLast, verifiedPhone ? 1 : 0, verifiedEmail ? 1 : 0, now());
+      db.prepare(`INSERT INTO patients (id, mrn, ${names.join(', ')}, opd_id, ipd_id, aadhaar_hash, aadhaar_last4, phone_verified, email_verified, created_at) VALUES (?,?,${names.map(() => '?').join(',')},?,?,?,?,?,?,?)`)
+        .run(id, mrn, ...Object.values(cols), opdId, ipdId, aHash, aLast, verifiedPhone ? 1 : 0, verifiedEmail ? 1 : 0, now());
     }
     const putDoc = (type, number, front, back) => {
       // An earlier copy of the same proof is kept (superseded), never deleted.

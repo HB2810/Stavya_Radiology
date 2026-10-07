@@ -8,8 +8,14 @@ import m3 from './003_service_master.js';
 import m4 from './004_discount_scheme_link.js';
 import m5 from './005_channel_traffic.js';
 import m6 from './006_rad_cases.js';
+import m7 from './007_assistant_lane.js';
+import m8 from './008_optional_traffic.js';
+import m9 from './009_integrations_reserved.js';
+import m10 from './010_module_access.js';
+import m11 from './011_opd_ipd_ids.js';
+import m12 from './012_reception_workspace.js';
 
-export const MIGRATIONS = [m1, m2, m3, m4, m5, m6];
+export const MIGRATIONS = [m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12];
 export const LATEST = MIGRATIONS[MIGRATIONS.length - 1].id;
 
 const hasTable = (db, name) => Boolean(db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(name));

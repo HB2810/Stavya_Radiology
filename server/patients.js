@@ -6,7 +6,8 @@ import { listOrders } from './orders.js';
 
 export function searchPatients(q, user) {
   const like = `%${likeEsc(String(q || '').trim())}%`;
-  return db.prepare("SELECT * FROM patients WHERE name LIKE ? ESCAPE '\\' OR mrn LIKE ? ESCAPE '\\' OR phone LIKE ? ESCAPE '\\' ORDER BY name LIMIT 30").all(like, like, like);
+  return db.prepare(`SELECT * FROM patients WHERE name LIKE ? ESCAPE '\\' OR mrn LIKE ? ESCAPE '\\' OR phone LIKE ? ESCAPE '\\'
+    OR IFNULL(opd_id,'') LIKE ? ESCAPE '\\' OR IFNULL(ipd_id,'') LIKE ? ESCAPE '\\' ORDER BY name LIMIT 30`).all(like, like, like, like, like);
 }
 
 export function createPatient(body, user) {

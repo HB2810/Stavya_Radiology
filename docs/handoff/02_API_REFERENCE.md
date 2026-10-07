@@ -353,7 +353,7 @@ visibility for reads.
 
 | Method & path | Role(s) | Request body | Success response | Errors |
 |---|---|---|---|---|
-| `POST /api/orders/:id/safety` | `technologist`, `radiologist` | `{ pregnant (YES/NO/NA), contrastAllergy (YES/NO/NA), mriImplant (YES/NO/NA/UNKNOWN), egfr? (0-200), notes?, overrideReason? }` | `{ id, status (CLEARED/BLOCKED/CLEARED_OVERRIDE), flags: [{level: BLOCK/WARN, text}] }` | `400 FIELD_INVALID` (enum fields); `400 EGFR_INVALID`; `403 forbidden` (override attempted by non-radiologist) |
+| `POST /api/orders/:id/safety` | `technologist`, `radiologist` | `{ pregnant (YES/NO/NA), contrastAllergy (YES/NO/NA), mriImplant (YES/NO/NA/UNKNOWN), egfr? (1-150), notes?, overrideReason? }` | `{ id, status (CLEARED/BLOCKED/CLEARED_OVERRIDE), flags: [{level: BLOCK/WARN, text}] }` | `400 FIELD_INVALID` (enum fields); `400 EGFR_INVALID` (outside 1–150 JCI/NABH range); `403 forbidden` (override attempted by non-radiologist) |
 | `GET /api/orders/:id/words` | any w/ order visibility | — | Array of patient's-words entries + attached audio metadata | — |
 | `POST /api/orders/:id/words` | `technologist`, `radiologist` — **`upload: true`** | `{ text?, audio?: [{data: "data:audio/...;base64,..."}] (max 5, ≤4 MB each) }` | Updated words list | `400 WORDS_EMPTY`; `400 TOO_MANY_RECORDINGS`; `400 AUDIO_INVALID`/`AUDIO_TOO_LARGE` |
 | `POST /api/words/:id/delete` | `technologist`, `radiologist` (author or any radiologist) | — | `{ ok: true }` (soft delete, row kept) | `404 Entry not found`; `403 forbidden` |
